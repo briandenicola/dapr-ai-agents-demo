@@ -1,0 +1,17 @@
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: {{ print .Values.APP_NAME "-config" | quote }}
+  namespace: {{ .Values.APP.NAMESPACE }}
+spec:
+  metric:
+   enabled: true
+  tracing:
+    samplingRate: "1"
+    stdout: true
+    zipkin:
+      endpointAddress: {{ print .Values.OTEL.ENDPOINT | quote }}
+  mtls:
+    enabled: true
+    workloadCertTTL: "24h"
+    allowedClockSkew: "15m"

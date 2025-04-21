@@ -1,0 +1,29 @@
+APP:
+  NAME                                  : "locator-api"
+  NAMESPACE                             : "rome"
+  TAG_NAME                              : ""
+  URL                                   : "locator-api.bjdazure.tech"
+  PORT                                  : "8080"
+  VERSION                               : "1.0"  
+
+ISTIO:
+  GATEWAY                               : "aks-istio-ingress/default-bjdazure-tech-gw"
+  REVISION                              : "asm-1-24"
+
+OPENAI: 
+  ENDPOINT                              : ""
+  MODEL_NAME                            : "gpt-4o"
+ 
+ACR:
+  NAME                                  : ""
+
+KEYVAULT:
+  NAME                                  : ""
+
+WORKLOAD_ID:
+  NAME                                  : ""
+  CLIENT_ID                             : ""
+  TENANT_ID                             : ""
+
+OTEL:
+  ENDPOINT                              : "http://otel-collector.otel-system.svc.cluster.local:4317"

@@ -1,0 +1,120 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.OTEL.NAMESPACE }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-collector
+  namespace: {{ .Values.OTEL.NAMESPACE }}
+  labels:
+    app: opentelemetry
+    component: otel-collector
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: opentelemetry
+      component: otel-collector
+  template:
+    metadata:
+      labels:
+        app: opentelemetry
+        component: otel-collector
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: {{ .Values.OTEL.WORKLOAD_ID_NAME }}
+      containers:
+      - name: azuremonitor-ingestion-proxy
+        image: {{ print .Values.OTEL.AAD_AGENT_PROXY_CONTAINER_NAME ":" .Values.OTEL.AAD_AGENT_PROXY_VERSION | quote }}  
+        ports:
+        - name: auth-port
+          containerPort: {{ .Values.OTEL.PROXY_LISTENING_PORT }}
+        env:
+          - name:  AUDIENCE
+            value: https://monitor.azure.com/.default
+          - name:  TARGET_HOST
+            value: {{ .Values.APP_INSIGHTS.INGESTION_ENDPOINT }}
+          - name:  LISTENING_PORT
+            value: {{ .Values.OTEL.PROXY_LISTENING_PORT | quote }}
+          - name:  AZURE_CLIENT_ID
+            value: {{ .Values.OTEL.CLIENT_ID }}
+          - name:  AZURE_TENANT_ID
+            value: {{ .Values.OTEL.TENANT_ID }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: auth-port
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: auth-port
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        resources:
+          limits:
+            cpu: "1"
+            memory: 2Gi
+          requests:
+            cpu: 200m
+            memory: 400Mi        
+      - name: otel-collector
+        image: otel/opentelemetry-collector-contrib:{{ .Values.OTEL.VERSION }}
+        command:
+        - "/otelcol-contrib"
+        - "--config=/config/otel-collector-config.yaml"
+        resources:
+          limits:
+            cpu: "1"
+            memory: 2Gi
+          requests:
+            cpu: 200m
+            memory: 400Mi
+        ports:
+          - containerPort: 9411
+          - containerPort: 4317
+          - containerPort: 13133
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 13133
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 13133
+        volumeMounts:
+        - name: config
+          mountPath: "/config"
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: otel-collector-config
+          items:
+          - key: "otel-collector-config.yaml"
+            path: "otel-collector-config.yaml"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-collector
+  namespace: {{ .Values.OTEL.NAMESPACE }}
+  labels:
+    component: otel-collector
+spec:
+  ports:
+  - name: grpc
+    port: 4317
+    protocol: TCP
+    targetPort: 4317
+  - name: zipkin
+    port: 9411
+    protocol: TCP
+    targetPort: 9411
+  selector:
+    component: otel-collector
+---

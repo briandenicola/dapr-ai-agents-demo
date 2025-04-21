@@ -1,0 +1,47 @@
+version: "3"
+
+vars:
+  LOCAL_TITLE: "{{.TITLE}} (local)"
+  DEFAULT_REGION: eastus2
+
+tasks:  
+  default:
+    cmds:
+      - task --list
+
+  up:
+    desc: Creates a Development Environment for {{.LOCAL_TITLE}}
+    cmds:
+      - terraform workspace new {{.REGION}} || true
+      - terraform workspace select {{.REGION}}
+      - terraform init
+      - task: apply
+    vars:
+      REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
+
+  apply:
+    desc: Applies Terraform configuration for {{.LOCAL_TITLE}}
+    cmds:
+      - terraform apply -auto-approve  -compact-warnings
+        -var "region={{.REGION}}"
+        -var "tags={{.LOCAL_TITLE}}"
+    vars:
+      REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
+
+  run:
+    desc: Starts Aspire Dashboard and compiles/runs API (local)
+    cmds: 
+    - task: aspire
+    vars:
+      AOI_ENDPOINT:
+        sh: terraform output -raw OPENAI_ENDPOINT
+
+  aspire:
+    cmds: 
+    - docker run --rm -p 18888:18888 -p 4317:18889 -d --name aspire-dashboard  mcr.microsoft.com/dotnet/aspire-dashboard:8.1.0 > /dev/null 2>&1 || true
+
+  down:
+    desc: Destroys all resources and cleans up Terraform for {{.LOCAL_TITLE}}
+    cmds:
+      - az group list --tag Application="{{.LOCAL_TITLE}}" --query "[].name" -o tsv | xargs -ot -n 1 az group delete -y --no-wait -n || true
+      - rm -rf terraform.tfstate.d .terraform.lock.hcl .terraform terraform.tfstate terraform.tfstate.backup .terraform.tfstate.lock.info || true

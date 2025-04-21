@@ -3,7 +3,7 @@
 	"build": {
 		"dockerfile": "Dockerfile",
 		"args": { 
-			"VARIANT": "dev-8.0-jammy",
+			"VARIANT": "dev-9.0-noble",
 			"NODE_VERSION": "lts/*"
 		}
 	},
@@ -13,28 +13,33 @@
 		"vscode": {	
 			"extensions": [
 				"ms-dotnettools.csharp",
+				"ms-dotnettools.vscode-dotnet-runtime",
+				"golang.go",
 				"ms-azuretools.vscode-docker",
-				"ms-azuretools.vscode-dapr",
 				"ms-azuretools.vscode-azureterraform",
-				"ms-vscode.powershell",
-				"ms-vscode.azure-account",
-				"ms-kubernetes-tools.aks-devx-tools",
+				"ms-azuretools.vscode-azure-github-copilot",
 				"ms-kubernetes-tools.vscode-kubernetes-tools",
-				"github.vscode-pull-request-github",				
+				"ms-vscode.powershell",
+				"github.vscode-pull-request-github",
+				"msjsdiag.vscode-react-native",
+
 				"github.copilot",
 				"mindaro.mindaro" 
 			]
 		}
 	},
 
-	"forwardPorts": [5000, 5001],
+	"forwardPorts": [],
 
 	"remoteUser": "vscode",
 	"features": {
 		"ghcr.io/devcontainers/features/azure-cli:1": {},
-		"ghcr.io/devcontainers/features/common-utils:1": {},
+		"ghcr.io/devcontainers/features/common-utils:2.5.2": {},
 		"ghcr.io/devcontainers/features/terraform:1": {},
 		"ghcr.io/devcontainers/features/docker-from-docker:1": {},
+		"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {},
+		"ghcr.io/jsburckhardt/devcontainer-features/flux:1": {},
+		"ghcr.io/rio/features/skaffold:2": {},
 		"ghcr.io/devcontainers/features/sshd:1": {
 			"version": "latest"
 		},
