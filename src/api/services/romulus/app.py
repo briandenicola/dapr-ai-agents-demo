@@ -1,14 +1,19 @@
-from dapr_agents import Agent, AgentActor
+from dapr_agents import Agent, AgentActor, OpenAIChatClient
 from dotenv import load_dotenv
 import asyncio
 import logging
 
-
 async def main():
     try:
-        # Define Agent
+        llm = OpenAIChatClient(
+            api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+            azure_deployment="gpt-4o",
+            api_version="2024-08-06",
+        )
         romulus_agent = Agent(
             role="Son of Mars",
+            llm=llm,
             name="Romulus",
             goal="To found a new city on one of the seven hills of Rome, using augury to determine the best location.",
             instructions=[

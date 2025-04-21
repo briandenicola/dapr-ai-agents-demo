@@ -9,15 +9,31 @@ tasks:
     cmds:
       - task --list
 
-  up:
-    desc: Creates a Development Environment for {{.LOCAL_TITLE}}
-    cmds:
-      - terraform workspace new {{.REGION}} || true
-      - terraform workspace select {{.REGION}}
-      - terraform init
-      - task: apply
+  init:
+    internal: true
+    run: once
+    cmds: 
+    - terraform workspace new {{.REGION}} || true
+    - terraform workspace select {{.REGION}}
+    - terraform init
     vars:
       REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
+  
+  venv:
+    internal: true
+    dir: ../../src/api
+    run: when_changed
+    cmds: 
+    - python3.10 -m venv .venv
+    - source .venv/bin/activate
+    - pip install -r requirements.txt
+
+  up:
+    desc: Creates a Development Environment for {{.LOCAL_TITLE}}
+    deps:
+      - task: init
+    cmds:
+      - task: apply
 
   apply:
     desc: Applies Terraform configuration for {{.LOCAL_TITLE}}
@@ -28,20 +44,22 @@ tasks:
     vars:
       REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
 
-  # refresh:
-  #   desc: Refreshes Terraform configuration for {{.LOCAL_TITLE}}
-  #   cmds:
-  #     - terraform refresh
-  #       -var "region={{.REGION}}"
-  #       -var "tags={{.LOCAL_TITLE}}"
-  #   vars:
-  #     REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
+  refresh:
+    desc: Refreshes Terraform configuration for {{.LOCAL_TITLE}}
+    cmds:
+      - terraform refresh
+        -var "region={{.REGION}}"
+        -var "tags={{.LOCAL_TITLE}}"
+    vars:
+      REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
 
   creds: 
     desc: Outputs Open AI Endpoint and KEY to .env file
     cmds:
-    - echo OPENAI_API_KEY={{.AOI_KEY}} > ../../src/.env
-    - echo OPENAI_API_ENDPOINT={{.AOI_ENDPOINT}} >> ../../src/.env
+    - cmd: echo OPENAI_API_KEY={{.AOI_KEY}} > ../../src/.env
+      silent: true
+    - cmd: echo OPENAI_API_ENDPOINT={{.AOI_ENDPOINT}} >> ../../src/.env
+      silent: true
     vars:
       AOI_ENDPOINT:
         sh: terraform output -raw OPENAI_ENDPOINT
@@ -49,9 +67,13 @@ tasks:
         sh: terraform output -raw OPENAI_PRIMARY_KEY
 
   run:
-    desc: Starts Aspire Dashboard and compiles/runs API (local)
+    desc: Starts Aspire Dashboard and runs API
+    dir: ../../src/api
+    deps:
+    - task: venv
     cmds: 
     - task: aspire
+    - source ../.env ; dapr run -f ./dapr-llm.yaml
     vars:
       AOI_ENDPOINT:
         sh: terraform output -raw OPENAI_ENDPOINT

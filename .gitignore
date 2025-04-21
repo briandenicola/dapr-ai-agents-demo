@@ -7,7 +7,7 @@
 .env
 scripts/.certs
 src/api/.venv
-src/.env
+src/api/.env
 
 # Terraform 
 infrastructure/local/.terraform/

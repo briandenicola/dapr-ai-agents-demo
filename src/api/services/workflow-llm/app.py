@@ -1,13 +1,19 @@
-from dapr_agents import LLMOrchestrator
+from dapr_agents import Agent, AgentActor, OpenAIChatClient
 from dotenv import load_dotenv
 import asyncio
 import logging
 
-
 async def main():
     try:
+        llm = OpenAIChatClient(
+            api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+            azure_deployment="gpt-4o",
+            api_version="2024-08-06",
+        )
         llm_workflow = LLMOrchestrator(
             name="LLMOrchestrator",
+            llm=llm,
             message_bus_name="messagepubsub",
             state_store_name="workflowstatestore",
             state_key="workflow_state",
