@@ -69,11 +69,9 @@ tasks:
   run:
     desc: Starts Aspire Dashboard and runs API
     dir: ../../src/api
-    #deps:
-    #- task: venv
     cmds: 
     - task: aspire
-    - source ../.env ; dapr run -f ./dapr-llm.yaml
+    - dapr run -f ./dapr-llm.yaml
     vars:
       AOI_ENDPOINT:
         sh: terraform output -raw OPENAI_ENDPOINT

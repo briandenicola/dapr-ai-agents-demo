@@ -32,7 +32,7 @@ async def main():
             message_bus_name="messagepubsub",
             agents_registry_store_name="agentstatestore",
             agents_registry_key="agents_registry",
-            service_port=8003,
+            service_port=8001,
         )
 
         await human_actor.start()
