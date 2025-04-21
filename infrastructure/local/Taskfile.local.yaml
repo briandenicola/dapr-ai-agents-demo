@@ -20,13 +20,13 @@ tasks:
       REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
   
   venv:
-    internal: true
+    desc: Preps virtual environment
     dir: ../../src/api
     run: when_changed
     cmds: 
-    - python3.10 -m venv .venv
-    - source .venv/bin/activate
-    - pip install -r requirements.txt
+    - python3.10 -m venv .venv &&
+      source .venv/bin/activate &&
+      pip install -r requirements.txt
 
   up:
     desc: Creates a Development Environment for {{.LOCAL_TITLE}}
@@ -69,8 +69,8 @@ tasks:
   run:
     desc: Starts Aspire Dashboard and runs API
     dir: ../../src/api
-    deps:
-    - task: venv
+    #deps:
+    #- task: venv
     cmds: 
     - task: aspire
     - source ../.env ; dapr run -f ./dapr-llm.yaml

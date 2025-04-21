@@ -2,13 +2,14 @@ from dapr_agents import Agent, AgentActor, OpenAIChatClient
 from dotenv import load_dotenv
 import asyncio
 import logging
+import os
 
 async def main():
     try:
         
         llm = OpenAIChatClient(
-            api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+            api_key=os.getenv("OPENAI_API_KEY"),
+            azure_endpoint=os.getenv("OPENAI_API_ENDPOINT"),
             azure_deployment="gpt-4o",
             api_version="2024-08-06",
         )
