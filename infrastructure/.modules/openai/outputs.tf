@@ -12,3 +12,8 @@ output "OPENAI_RESOURCE_NAME" {
   value     = azurerm_cognitive_account.this.name
   sensitive = false
 }
+
+output "OPENAI_PRIMARY_KEY" {
+  value     = azurerm_cognitive_account.this.primary_access_key
+  sensitive = true
+}

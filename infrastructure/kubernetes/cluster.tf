@@ -7,7 +7,7 @@ module "cluster" {
   depends_on = [
     module.azure_monitor
   ]
-  source           = "${local.modules_path}/aks"
+  source           = "../.modules/aks"
   resource_name    = local.resource_name
   sdlc_environment = local.environment_type
   tags             = var.tags

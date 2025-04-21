@@ -12,3 +12,8 @@ output "OPENAI_ENDPOINT" {
     value = module.openai.OPENAI_ENDPOINT
     sensitive = false
 }
+
+output "OPENAI_PRIMARY_KEY" {
+    value = module.openai.OPENAI_PRIMARY_KEY
+    sensitive = true
+}

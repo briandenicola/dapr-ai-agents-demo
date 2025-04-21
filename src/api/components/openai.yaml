@@ -1,0 +1,12 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: ai
+spec:
+  type: bindings.azure.openai
+  version: v1
+  metadata:
+  - name: apiKey # Required
+    value: 
+  - name: endpoint # Required
+    value: 

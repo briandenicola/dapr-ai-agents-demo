@@ -6,23 +6,25 @@
 # Environment Variables
 .env
 scripts/.certs
-src/ui/.env
+src/api/.venv
+src/.env
 
 # Terraform 
-infrastructure/.terraform/
-infrastructure/.terraform.tfstate.lock.info
-infrastructure/.terraform.lock.hcl
-infrastructure/terraform.tfstate
-infrastructure/terraform.tfstate.backup
-infrastructure/variables.tfvars
-infrastructure/terraform.tfstate.d/
-infrastructure/simple/.terraform/
-infrastructure/simple/.terraform.tfstate.lock.info
-infrastructure/simple/.terraform.lock.hcl
-infrastructure/simple/terraform.tfstate
-infrastructure/simple/terraform.tfstate.backup
-infrastructure/simple/variables.tfvars
-infrastructure/simple/terraform.tfstate.d/
+infrastructure/local/.terraform/
+infrastructure/local/.terraform.tfstate.lock.info
+infrastructure/local/.terraform.lock.hcl
+infrastructure/local/terraform.tfstate
+infrastructure/local/terraform.tfstate.backup
+infrastructure/local/variables.tfvars
+infrastructure/local/terraform.tfstate.d/
+
+infrastructure/kubernetes/.terraform/
+infrastructure/kubernetes/.terraform.tfstate.lock.info
+infrastructure/kubernetes/.terraform.lock.hcl
+infrastructure/kubernetes/terraform.tfstate
+infrastructure/kubernetes/terraform.tfstate.backup
+infrastructure/kubernetes/variables.tfvars
+infrastructure/kubernetes/terraform.tfstate.d/
 
 # User-specific files
 *.rsuser

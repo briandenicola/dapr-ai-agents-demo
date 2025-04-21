@@ -28,6 +28,26 @@ tasks:
     vars:
       REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
 
+  # refresh:
+  #   desc: Refreshes Terraform configuration for {{.LOCAL_TITLE}}
+  #   cmds:
+  #     - terraform refresh
+  #       -var "region={{.REGION}}"
+  #       -var "tags={{.LOCAL_TITLE}}"
+  #   vars:
+  #     REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
+
+  creds: 
+    desc: Outputs Open AI Endpoint and KEY to .env file
+    cmds:
+    - echo OPENAI_API_KEY={{.AOI_KEY}} > ../../src/.env
+    - echo OPENAI_API_ENDPOINT={{.AOI_ENDPOINT}} >> ../../src/.env
+    vars:
+      AOI_ENDPOINT:
+        sh: terraform output -raw OPENAI_ENDPOINT
+      AOI_KEY:
+        sh: terraform output -raw OPENAI_PRIMARY_KEY
+
   run:
     desc: Starts Aspire Dashboard and compiles/runs API (local)
     cmds: 

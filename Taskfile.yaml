@@ -18,10 +18,12 @@ includes:
   local:
     taskfile: ./infrastructure/local/Taskfile.local.yaml
     internal: false
+    dir: ./infrastructure/local/
 
   kubernetes:
     taskfile: ./infrastructure/kubernetes/Taskfile.aks.yaml
     internal: false
+    dir: ./infrastructure/kubernetes/
 
 tasks:  
   default:

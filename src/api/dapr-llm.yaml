@@ -1,0 +1,26 @@
+version: 1
+common:
+  resourcesPath: ./components
+  logLevel: info
+  appLogDestination: console
+  daprdLogDestination: console
+
+apps:
+- appID: RomulusAgent
+  appDirPath: ./services/romulus/
+  command: ["python3", "app.py"]
+  appPort: 8001
+
+- appID: RemusAgent
+  appDirPath: ./services/remus/
+  command: ["python3", "app.py"]
+  appPort: 8002
+
+- appID: WorkflowApp
+  appDirPath: ./services/workflow-llm/
+  command: ["python3", "app.py"]
+  appPort: 8004
+
+- appID: ClientApp
+  appDirPath: ./services/client/
+  command: ["python3", "http_client.py"]
