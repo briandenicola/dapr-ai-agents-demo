@@ -13,6 +13,7 @@ locals {
   sb_name                  = "${local.resource_name}-sbns"
   sql_name                 = "${local.resource_name}-sql"
   static_webapp_location   = "centralus"
+  openai_location          = var.opeanai_region
   app_path                 = "./cluster-config"
   flux_repository          = "https://github.com/briandenicola/dapr-ai-agents-demo"
   environment_type         = "dev"

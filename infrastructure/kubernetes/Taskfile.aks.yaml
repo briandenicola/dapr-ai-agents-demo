@@ -22,8 +22,6 @@ tasks:
       - task: apply
       - task: creds
       - task: core
-      - task: build
-      - task: deploy
       - task: dns
 
   init:

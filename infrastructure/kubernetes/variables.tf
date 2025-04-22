@@ -3,6 +3,11 @@ variable "region" {
   default     = "southcentralus"
 }
 
+variable "opeanai_region" {
+  description = "The location for this Azure OpenAI deployment"
+  default     = "eastus2"
+}
+
 variable "tags" {
   description = "Tags to apply to Resource Group"
 }
