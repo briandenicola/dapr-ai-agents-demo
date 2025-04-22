@@ -13,20 +13,22 @@ tasks:
     internal: true
     run: once
     cmds: 
+    - dapr uninstall
+    - dapr init
     - terraform workspace new {{.REGION}} || true
     - terraform workspace select {{.REGION}}
     - terraform init
     vars:
       REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
   
-  # venv:
-  #   desc: Preps virtual environment
-  #   dir: ../../src/api
-  #   run: when_changed
-  #   cmds: 
-  #   - python3.10 -m venv .venv &&
-  #     source .venv/bin/activate &&
-  #     pip install -r requirements.txt
+  env:
+    desc: Preps virtual environment
+    dir: ../../src/api
+    run: when_changed
+    cmds: 
+    - python3.10 -m venv .venv &&
+      source .venv/bin/activate &&
+      pip install -r requirements.txt
 
   up:
     desc: Creates a Development Environment for {{.LOCAL_TITLE}}
@@ -67,13 +69,17 @@ tasks:
         sh: terraform output -raw OPENAI_PRIMARY_KEY
 
   run:
-    desc: Starts Aspire Dashboard and runs API
-    dir: ../../src/api
-    cmds: 
+    desc: Starts dapr and runs the application 
+    dir: ../../scripts
+    deps:
     - task: aspire
-    #- dapr run -f ./dapr-llm.yaml
+    cmds: 
+    - bash ./dapr-local.sh
 
   aspire:
+    internal: true
+    desc: Starts Aspire Dashboard
+    run: once
     cmds: 
     - docker run --rm -p 18888:18888 -p 4317:18889 -d --name aspire-dashboard  mcr.microsoft.com/dotnet/aspire-dashboard:8.1.0 > /dev/null 2>&1 || true
 

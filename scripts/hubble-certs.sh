@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
-set -x
-
-# Directory where certificates will be stored
-CERT_DIR="$(pwd)/.certs"
+f
 mkdir -p "$CERT_DIR"
 
 declare -A CERT_FILES=(
