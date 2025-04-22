@@ -16,18 +16,18 @@ tasks:
 
   up:
     desc: Creates a complete Azure environment for {{.TITLE}}
+    deps:
+    - task: init
     cmds:
-      - task: init
       - task: apply
       - task: creds
       - task: core
       - task: build
       - task: deploy
       - task: dns
-    vars:
-      REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
 
   init:
+    run: when_changed  
     desc: Initializes Terraform for {{.TITLE}}
     cmds:
       - terraform workspace new {{.REGION}} || true
@@ -35,6 +35,10 @@ tasks:
       - terraform init
     vars:
       REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
+    status:
+      - test -d terraform.tfstate.d      
+      - test -d .terraform
+      - test -f .terraform.lock.hcl
 
   apply:
     cmds:

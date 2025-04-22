@@ -2,7 +2,7 @@ version: "3"
 
 vars:
   LOCAL_TITLE: "{{.TITLE}} (local)"
-  DEFAULT_REGION: eastus2
+  LOCAL_REGION: eastus2
 
 tasks:  
   default:
@@ -19,7 +19,7 @@ tasks:
     - terraform workspace select {{.REGION}}
     - terraform init
     vars:
-      REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
+      REGION: "{{default .LOCAL_REGION .CLI_ARGS}}"
   
   env:
     desc: Preps virtual environment
@@ -44,7 +44,7 @@ tasks:
         -var "region={{.REGION}}"
         -var "tags={{.LOCAL_TITLE}}"
     vars:
-      REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
+      REGION: "{{default .LOCAL_REGION .CLI_ARGS}}"
 
   refresh:
     desc: Refreshes Terraform configuration for {{.LOCAL_TITLE}}
@@ -53,7 +53,7 @@ tasks:
         -var "region={{.REGION}}"
         -var "tags={{.LOCAL_TITLE}}"
     vars:
-      REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
+      REGION: "{{default .LOCAL_REGION .CLI_ARGS}}"
 
   creds: 
     desc: Outputs Open AI Endpoint and KEY to .env file
