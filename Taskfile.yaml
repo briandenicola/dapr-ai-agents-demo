@@ -21,7 +21,7 @@ includes:
     internal: false
     dir: ./infrastructure/local/
 
-  kubernetes:
+  azure:
     taskfile: ./infrastructure/kubernetes/Taskfile.aks.yaml
     internal: false
     dir: ./infrastructure/kubernetes/
