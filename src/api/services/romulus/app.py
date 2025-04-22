@@ -10,7 +10,7 @@ async def main():
             api_key=os.getenv("OPENAI_API_KEY"),
             azure_endpoint=os.getenv("OPENAI_API_ENDPOINT"),
             azure_deployment="gpt-4.1",
-            api_version="2025-04-14",
+            api_version="2024-12-01-preview",
         )
         romulus_agent = Agent(
             role="Son of Mars",
