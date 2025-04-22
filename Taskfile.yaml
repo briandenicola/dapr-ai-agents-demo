@@ -12,7 +12,9 @@ vars:
   APP_URL: https://locator-api.{{.DEFAULT_DOMAIN}}
   COUNT: 2
   NAMESPACE: rome 
-
+  OPENAI_DEPLOYMENT_NAME: gpt-4.1
+  OPENAI_API_VERSION: 2024-12-01-preview
+  
 includes:
   local:
     taskfile: ./infrastructure/local/Taskfile.local.yaml

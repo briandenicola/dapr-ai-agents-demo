@@ -58,14 +58,16 @@ tasks:
   creds: 
     desc: Outputs Open AI Endpoint and KEY to .env file
     cmds:
-    - cmd: echo OPENAI_API_KEY={{.AOI_KEY}} > ../../src/api/.env
-      silent: true
-    - cmd: echo OPENAI_API_ENDPOINT={{.AOI_ENDPOINT}} >> ../../src/api/.env
+    - cmd: export OPENAI_API_ENDPOINT="{{.AOI_ENDPOINT}}" ; 
+           export OPENAI_API_KEY="{{.AOI_KEY}}" ; 
+           export OPENAI_DEPLOYMENT_NAME="{{.OPENAI_DEPLOYMENT_NAME}}" ; 
+           export OPENAI_API_VERSION="{{.OPENAI_API_VERSION}}" ; 
+           envsubst < ../../src/api/.env.sample > ../../src/api/.env
       silent: true
     vars:
       AOI_ENDPOINT:
         sh: terraform output -raw OPENAI_ENDPOINT
-      AOI_KEY:
+      AOI_KEY: 
         sh: terraform output -raw OPENAI_PRIMARY_KEY
 
   run:

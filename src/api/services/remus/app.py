@@ -10,8 +10,8 @@ async def main():
         llm = OpenAIChatClient(
             api_key=os.getenv("OPENAI_API_KEY"),
             azure_endpoint=os.getenv("OPENAI_API_ENDPOINT"),
-            azure_deployment="gpt-4.1",
-            api_version="2024-12-01-preview",
+            azure_deployment=os.getenv("OPENAI_DEPLOYMENT_NAME"), 
+            api_version=os.getenv("OPENAI_API_VERSION"),
         )
         
         remus_agent = Agent(
