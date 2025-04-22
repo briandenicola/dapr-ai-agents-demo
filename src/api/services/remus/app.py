@@ -10,8 +10,8 @@ async def main():
         llm = OpenAIChatClient(
             api_key=os.getenv("OPENAI_API_KEY"),
             azure_endpoint=os.getenv("OPENAI_API_ENDPOINT"),
-            azure_deployment="gpt-4o",
-            api_version="2024-08-06",
+            azure_deployment="gpt-4.1",
+            api_version="2025-04-14",
         )
         
         remus_agent = Agent(
@@ -35,7 +35,7 @@ async def main():
             message_bus_name="messagepubsub",
             agents_registry_store_name="agentstatestore",
             agents_registry_key="agents_registry",
-            service_port=8002,
+            service_port=8008,
         )
 
         await human_actor.start()

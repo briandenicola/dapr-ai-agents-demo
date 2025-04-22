@@ -19,14 +19,14 @@ tasks:
     vars:
       REGION: "{{default .DEFAULT_REGION .CLI_ARGS}}"
   
-  venv:
-    desc: Preps virtual environment
-    dir: ../../src/api
-    run: when_changed
-    cmds: 
-    - python3.10 -m venv .venv &&
-      source .venv/bin/activate &&
-      pip install -r requirements.txt
+  # venv:
+  #   desc: Preps virtual environment
+  #   dir: ../../src/api
+  #   run: when_changed
+  #   cmds: 
+  #   - python3.10 -m venv .venv &&
+  #     source .venv/bin/activate &&
+  #     pip install -r requirements.txt
 
   up:
     desc: Creates a Development Environment for {{.LOCAL_TITLE}}
@@ -56,9 +56,9 @@ tasks:
   creds: 
     desc: Outputs Open AI Endpoint and KEY to .env file
     cmds:
-    - cmd: echo OPENAI_API_KEY={{.AOI_KEY}} > ../../src/.env
+    - cmd: echo OPENAI_API_KEY={{.AOI_KEY}} > ../../src/api/.env
       silent: true
-    - cmd: echo OPENAI_API_ENDPOINT={{.AOI_ENDPOINT}} >> ../../src/.env
+    - cmd: echo OPENAI_API_ENDPOINT={{.AOI_ENDPOINT}} >> ../../src/api/.env
       silent: true
     vars:
       AOI_ENDPOINT:
@@ -71,10 +71,7 @@ tasks:
     dir: ../../src/api
     cmds: 
     - task: aspire
-    - dapr run -f ./dapr-llm.yaml
-    vars:
-      AOI_ENDPOINT:
-        sh: terraform output -raw OPENAI_ENDPOINT
+    #- dapr run -f ./dapr-llm.yaml
 
   aspire:
     cmds: 

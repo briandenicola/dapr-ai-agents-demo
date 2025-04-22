@@ -63,3 +63,22 @@ resource "azurerm_private_endpoint" "app_key_vault" {
     private_dns_zone_ids = [azurerm_private_dns_zone.privatelink_vault_core_windows_net.id]
   }
 }
+
+resource "azurerm_private_endpoint" "servicebus_namespace" {
+  name                = "${local.sb_name}-endpoint"
+  resource_group_name = azurerm_resource_group.this.name
+  location            = azurerm_resource_group.this.location
+  subnet_id           = azurerm_subnet.pe.id
+
+  private_service_connection {
+    name                           = "${local.sb_name}-endpoint"
+    private_connection_resource_id = azurerm_servicebus_namespace.this.id
+    subresource_names              = ["namespace"]
+    is_manual_connection           = false
+  }
+
+  private_dns_zone_group {
+    name                 = azurerm_private_dns_zone.privatelink_servicebus_windows_net.name
+    private_dns_zone_ids = [azurerm_private_dns_zone.privatelink_servicebus_windows_net.id]
+  }
+}
