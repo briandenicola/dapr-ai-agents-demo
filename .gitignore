@@ -8,6 +8,7 @@
 scripts/.certs
 src/api/.venv
 src/api/.env
+src/api/services/orchestrator/LLMOrchestrator_state.json
 
 # Terraform 
 infrastructure/local/.terraform/

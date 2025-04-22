@@ -17,7 +17,7 @@ apps:
   appPort: 8002
 
 - appID: WorkflowApp
-  appDirPath: ./services/workflow-llm/
+  appDirPath: ./services/orchestrator/
   command: ["python3", "app.py"]
   appPort: 8004
 

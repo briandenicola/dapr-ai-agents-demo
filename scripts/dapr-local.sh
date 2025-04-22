@@ -7,4 +7,4 @@ SRC_PATH=$(realpath "${SCRIPT_DIR}/../src/api")
 
 cd ${SRC_PATH}
 source .venv/bin/activate
-dapr run -f ./dapr-llm.yaml 
+dapr run -f ./dapr.yaml 

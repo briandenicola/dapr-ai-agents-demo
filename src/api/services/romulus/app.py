@@ -6,12 +6,14 @@ import os
 
 async def main():
     try:
+        
         llm = OpenAIChatClient(
             api_key=os.getenv("OPENAI_API_KEY"),
             azure_endpoint=os.getenv("OPENAI_API_ENDPOINT"),
             azure_deployment=os.getenv("OPENAI_DEPLOYMENT_NAME"), 
             api_version=os.getenv("OPENAI_API_VERSION"),
         )
+        
         romulus_agent = Agent(
             role="Son of Mars",
             llm=llm,
@@ -32,7 +34,7 @@ async def main():
             message_bus_name="messagepubsub",
             agents_registry_store_name="agentstatestore",
             agents_registry_key="agents_registry",
-            service_port=8005,
+            service_port=8001,
         )
 
         await human_actor.start()
