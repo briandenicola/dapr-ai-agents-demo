@@ -28,18 +28,15 @@ spec:
         dapr.io/enabled: "true"
         dapr.io/config: {{ print .Values.APP.NAME "-config" | quote }}
         dapr.io/app-id: {{ print .Values.APP.NAME "-romulus" | quote }}
-        dapr.io/app-port: "8002"
+        dapr.io/app-port: "8001"
         dapr.io/log-level: "info"
         dapr.io/http-max-request-size: "512"                
     spec:
       serviceAccountName: {{ .Values.WORKLOAD_ID.NAME }}
       containers:
-      - name: {{ print .Values.APP.NAME "-romulus" }}
+      - name: romulus
         image:  {{ print .Values.ACR.NAME "/" .Values.APP.NAMESPACE "/" .Values.APP.NAME "-romulus:" .Values.APP.VERSION }} 
         imagePullPolicy: Always
-        securityContext:
-          runAsNonRoot: true
-          allowPrivilegeEscalation: false 
         env:
         - name: OPENAI_API_ENDPOINT
           value: {{ print .Values.OPENAI.ENDPOINT }}
@@ -53,7 +50,7 @@ spec:
         - name: OPENAI_DEPLOYMENT_NAME
           value: {{ .Values.OPENAI.DEPLOYMENT_NAME }}        
         ports:
-        - containerPort: 8002
+        - containerPort: 8001
         - containerPort: 9090
         resources:
           limits:
@@ -85,7 +82,7 @@ spec:
     name: romulus
   ports:
   - port: 80
-    targetPort: 8002
+    targetPort: 8001
     name: web
   - port: 9090
     targetPort: 9090

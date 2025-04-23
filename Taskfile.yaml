@@ -10,7 +10,7 @@ vars:
   DEFAULT_REGION: canadacentral
   DEFAULT_DOMAIN: bjdazure.tech
   APP_URL: https://locator-api.{{.DEFAULT_DOMAIN}}
-  COUNT: 2
+  COUNT: 3
   NAMESPACE: rome 
   OPENAI_DEPLOYMENT_NAME: gpt-4.1
   OPENAI_API_VERSION: 2024-12-01-preview

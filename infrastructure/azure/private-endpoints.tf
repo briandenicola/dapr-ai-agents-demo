@@ -37,14 +37,14 @@ resource "azurerm_private_endpoint" "key_vault" {
   }
 
   private_dns_zone_group {
-    name                 = azurerm_private_dns_zone.privatelink_vault_core_windows_net.name
-    private_dns_zone_ids = [azurerm_private_dns_zone.privatelink_vault_core_windows_net.id]
+    name                 = azurerm_private_dns_zone.privatelink_vault_core_azure_net.name
+    private_dns_zone_ids = [azurerm_private_dns_zone.privatelink_vault_core_azure_net.id]
   }
 }
 
 resource "azurerm_private_endpoint" "app_key_vault" {
   depends_on = [
-    module.cluster
+    azurerm_key_vault.this
   ]
   name                = "${local.app_keyvault_name}-endpoint"
   resource_group_name = azurerm_resource_group.this.name
@@ -59,8 +59,8 @@ resource "azurerm_private_endpoint" "app_key_vault" {
   }
 
   private_dns_zone_group {
-    name                 = azurerm_private_dns_zone.privatelink_vault_core_windows_net.name
-    private_dns_zone_ids = [azurerm_private_dns_zone.privatelink_vault_core_windows_net.id]
+    name                 = azurerm_private_dns_zone.privatelink_vault_core_azure_net.name
+    private_dns_zone_ids = [azurerm_private_dns_zone.privatelink_vault_core_azure_net.id]
   }
 }
 

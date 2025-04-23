@@ -34,12 +34,9 @@ spec:
     spec:
       serviceAccountName: {{ .Values.WORKLOAD_ID.NAME }}
       containers:
-      - name: {{ print .Values.APP.NAME "-orchestrator" }}
+      - name: orchestrator
         image:  {{ print .Values.ACR.NAME "/" .Values.APP.NAMESPACE "/" .Values.APP.NAME "-orchestrator:" .Values.APP.VERSION }} 
         imagePullPolicy: Always
-        securityContext:
-          runAsNonRoot: true
-          allowPrivilegeEscalation: false 
         env:
         - name: OPENAI_API_ENDPOINT
           value: {{ print .Values.OPENAI.ENDPOINT }}

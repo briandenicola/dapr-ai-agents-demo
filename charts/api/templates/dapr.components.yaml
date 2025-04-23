@@ -35,7 +35,7 @@ auth:
 apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
-  name: pubsub
+  name: messagepubsub
   namespace: {{ .Values.APP.NAMESPACE }}
 spec:
   type: pubsub.azure.servicebus
