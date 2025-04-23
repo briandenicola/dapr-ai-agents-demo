@@ -80,62 +80,49 @@ tasks:
       COMMIT_VERSION:
         sh: git rev-parse HEAD | cut -c 1-8
 
-  # ui:
-  #   desc: Builds and Deploys the UI code to Azure Static Web Apps
-  #   dir: ./src/ui
-  #   cmds:
-  #     - echo EXPO_PUBLIC_API_URL={{.APIM_GATEWAY}} > .env
-  #     - echo EXPO_PUBLIC_API_KEY={{.APIM_SUBSCRIPTION_ID}} >> .env
-  #     - source .env
-  #     - npm install
-  #     - npx expo export --platform web -c
-  #     - cmd: swa deploy --env production --app-location dist --deployment-token {{.DEPLOY_TOKEN}}
-  #       silent: true
-  #   vars:
-  #     SWA:
-  #       sh: terraform -chdir=../../infrastructure output -raw AZURE_STATIC_WEBAPP_NAME
-  #     DEPLOY_TOKEN:
-  #       sh: az staticwebapp secrets list --name {{.SWA}} --query "properties.apiKey" -o tsv
-  #     APIM_GATEWAY:
-  #       sh: terraform -chdir=../../infrastructure output -raw APIM_GATEWAY        
-  #     APIM_SUBSCRIPTION_ID:
-  #       sh: terraform -chdir=../../infrastructure output -raw APIM_SUBSCRIPTION_ID            
-
-  # deploy:
-  #   desc: Deploys application via Helm/GitOps
-  #   cmds:
-  #     - task: branch 
-  #     - helm template {{.HELM_CHART}}
-  #       --set ACR.NAME="{{.ACR_NAME}}.azurecr.io"
-  #       --set APP.VERSION={{.COMMIT_VERSION}}
-  #       --set APP.TAG_NAME={{.TAG_NAME}}
-  #       --set WORKLOAD_ID.NAME={{.WORKLOAD_ID_NAME}}
-  #       --set WORKLOAD_ID.CLIENT_ID={{.WORKLOAD_CLIENT_ID}}
-  #       --set WORKLOAD_ID.TENANT_ID={{.WORKLOAD_TENANT_ID}}        
-  #       --set OPENAI.MODEL_NAME={{.MODEL_NAME}}
-  #       --set OPENAI.ENDPOINT={{.OPENAI_ENDPOINT}} ./charts/api > 
-  #       ./cluster-config/api/components.yaml
-  #     - git add ./cluster-config/api/components.yaml || true
-  #     - git commit -m "[{{.DATE_TIME}}] - Updates for {{.TAG_NAME}} app 🤖🤖🤖 components" || true
-  #     - git push --set-upstream origin {{.TAG_NAME}} || true
-  #     - git checkout main        
-  #   vars:
-  #     TAG_NAME:
-  #       sh: terraform  output -raw APP_NAME
-  #     WORKLOAD_ID_NAME:
-  #       sh: terraform  output -raw WORKLOAD_ID_NAME        
-  #     WORKLOAD_CLIENT_ID:
-  #       sh: terraform  output -raw WORKLOAD_CLIENT_ID
-  #     WORKLOAD_TENANT_ID:
-  #       sh: terraform  output -raw WORKLOAD_TENANT_ID
-  #     ACR_NAME:
-  #       sh: terraform  output -raw ACR_NAME
-  #     OPENAI_ENDPOINT:
-  #       sh: terraform  output -raw OPENAI_ENDPOINT     
-  #     COMMIT_VERSION:
-  #       sh: git rev-parse HEAD | cut -c 1-8 
-  #     DATE_TIME:
-  #       sh: date        
+  deploy:
+    desc: Deploys application via Helm/GitOps
+    dir: ../../
+    cmds:
+      - task: branch 
+      - helm template {{.HELM_CHART}}
+        --set ACR.NAME="{{.ACR_NAME}}.azurecr.io"
+        --set APP.VERSION={{.COMMIT_VERSION}}
+        --set APP.NAME={{.APP_NAME}}
+        --set KEYVAULT.NAME={{.APP_KEYVAULT_NAME}}
+        --set WORKLOAD_ID.NAME={{.WORKLOAD_ID_NAME}}
+        --set WORKLOAD_ID.CLIENT_ID={{.WORKLOAD_CLIENT_ID}}
+        --set WORKLOAD_ID.TENANT_ID={{.WORKLOAD_TENANT_ID}}        
+        --set OPENAI.API_VERSION={{.OPENAI_API_VERSION}}
+        --set OPENAI.DEPLOYMENT_NAME={{.OPENAI_DEPLOYMENT_NAME}}
+        --set OPENAI.KEY={{.OPENAI_KEY}}
+        --set OPENAI.ENDPOINT={{.OPENAI_ENDPOINT}} ./charts/api > 
+        ./cluster-config/api/components.yaml
+      - git add ./cluster-config/api/components.yaml || true
+      - git commit -m "[{{.DATE_TIME}}] - Updates for {{.TAG_NAME}} app 🤖🤖🤖 components" || true
+      - git push --set-upstream origin {{.TAG_NAME}} || true
+      - git checkout main        
+    vars:
+      APP_NAME:
+        sh: terraform -chdir=./infrastructure/azure output -raw APP_NAME
+      WORKLOAD_ID_NAME:
+        sh: terraform -chdir=./infrastructure/azure output -raw WORKLOAD_ID_NAME        
+      WORKLOAD_CLIENT_ID:
+        sh: terraform -chdir=./infrastructure/azure output -raw WORKLOAD_CLIENT_ID
+      WORKLOAD_TENANT_ID:
+        sh: terraform -chdir=./infrastructure/azure output -raw WORKLOAD_TENANT_ID
+      ACR_NAME:
+        sh: terraform -chdir=./infrastructure/azure output -raw ACR_NAME
+      OPENAI_ENDPOINT:
+        sh: terraform -chdir=./infrastructure/azure output -raw OPENAI_ENDPOINT  
+      OPENAI_KEY:
+        sh: terraform -chdir=./infrastructure/azure output -raw OPENAI_PRIMARY_KEY
+      APP_KEYVAULT_NAME:
+        sh: terraform -chdir=./infrastructure/azure output -raw APP_KEYVAULT_NAME        
+      COMMIT_VERSION:
+        sh: git rev-parse HEAD | cut -c 1-8 
+      DATE_TIME:
+        sh: date        
 
   core:
     desc: Deploys Istio Certificate and Otel infrastructure via Helm/GitOps
@@ -181,6 +168,28 @@ tasks:
         sh: terraform -chdir=./infrastructure/azure output -raw KEYVAULT_NAME
       INGESTION_ENDPOINT:
         sh: terraform -chdir=./infrastructure/azure output -raw APP_INSIGHTS_CONNECTION_STRING | grep -oP 'IngestionEndpoint=\K[^;]+' | sed 's:/$::'
+
+  # ui:
+  #   desc: Builds and Deploys the UI code to Azure Static Web Apps
+  #   dir: ./src/ui
+  #   cmds:
+  #     - echo EXPO_PUBLIC_API_URL={{.APIM_GATEWAY}} > .env
+  #     - echo EXPO_PUBLIC_API_KEY={{.APIM_SUBSCRIPTION_ID}} >> .env
+  #     - source .env
+  #     - npm install
+  #     - npx expo export --platform web -c
+  #     - cmd: swa deploy --env production --app-location dist --deployment-token {{.DEPLOY_TOKEN}}
+  #       silent: true
+  #   vars:
+  #     SWA:
+  #       sh: terraform -chdir=../../infrastructure output -raw AZURE_STATIC_WEBAPP_NAME
+  #     DEPLOY_TOKEN:
+  #       sh: az staticwebapp secrets list --name {{.SWA}} --query "properties.apiKey" -o tsv
+  #     APIM_GATEWAY:
+  #       sh: terraform -chdir=../../infrastructure output -raw APIM_GATEWAY        
+  #     APIM_SUBSCRIPTION_ID:
+  #       sh: terraform -chdir=../../infrastructure output -raw APIM_SUBSCRIPTION_ID            
+
 
   dns:
     desc: Gets the IP Address of the Istio Gateway

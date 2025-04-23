@@ -14,7 +14,7 @@ variable "tags" {
 
 variable "namespace" {
   description = "The namespace application will be deployed to"
-  default     = "ric"
+  default     = "rome"
 }
 
 variable "node_sku" {
