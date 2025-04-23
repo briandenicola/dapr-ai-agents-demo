@@ -1,7 +1,7 @@
 apiVersion: dapr.io/v1alpha1
 kind: Configuration
 metadata:
-  name: {{ print .Values.APP_NAME "-config" | quote }}
+  name: {{ print .Values.APP.NAME "-config" | quote }}
   namespace: {{ .Values.APP.NAMESPACE }}
 spec:
   metric:
@@ -15,3 +15,5 @@ spec:
     enabled: true
     workloadCertTTL: "24h"
     allowedClockSkew: "15m"
+    controlPlaneTrustDomain: "cluster.local"
+    sentryAddress: "sentry.dapr-system.svc.cluster.local:80"

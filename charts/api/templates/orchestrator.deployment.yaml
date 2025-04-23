@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ print .Values.APP_NAME "-orchestrator" | quote }}
+  name: {{ print .Values.APP.NAME "-orchestrator" }}
   namespace: {{ .Values.APP.NAMESPACE }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ print .Values.APP_NAME "-orchestrator" | quote }}
-      name: {{ .Values.APP.TAG_NAME }}
+      app: {{ .Values.APP.NAME }} 
+      name: orchestrator
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -18,23 +18,23 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ print .Values.APP_NAME "-orchestrator" | quote }}
-        name: {{ .Values.APP.TAG_NAME }}
+        app: {{ .Values.APP.NAME }} 
+        name: orchestrator
         azure.workload.identity/use: "true"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9090"
         prometheus.io/path: "/metrics"
         dapr.io/enabled: "true"
-        dapr.io/config: {{ print .Values.APP_NAME "-config" | quote }}
-        dapr.io/app-id: {{ print .Values.APP_NAME "-orchestrator" | quote }}
+        dapr.io/config: {{ print .Values.APP.NAME "-config" | quote }}
+        dapr.io/app-id: {{ print .Values.APP.NAME "-orchestrator" | quote }}
         dapr.io/app-port: "8004"
         dapr.io/log-level: "info"
         dapr.io/http-max-request-size: "512"                
     spec:
       serviceAccountName: {{ .Values.WORKLOAD_ID.NAME }}
       containers:
-      - name: {{ .Values.APP.NAME }}
+      - name: {{ print .Values.APP.NAME "-orchestrator" }}
         image:  {{ print .Values.ACR.NAME "/" .Values.APP.NAMESPACE "/" .Values.APP.NAME "-orchestrator:" .Values.APP.VERSION }} 
         imagePullPolicy: Always
         securityContext:
@@ -63,12 +63,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ print .Values.APP_NAME "-orchestrator-svc" | quote }}
+  name: {{ print .Values.APP.NAME "-orchestrator-svc" | quote }}
   namespace: {{ .Values.APP.NAMESPACE }}
 spec:
   selector:
-    app: {{ print .Values.APP_NAME "-orchestrator" | quote }}
-    name: {{ .Values.APP.TAG_NAME }}
+    app: {{ .Values.APP.NAME }} 
+    name: orchestrator
   ports:
   - port: 80
     targetPort: 8004
@@ -91,7 +91,7 @@ spec:
   http:
   - route:
     - destination:
-        host: {{ print .Values.APP_NAME "-orchestrator-svc" | quote }}
+        host: {{ print .Values.APP.NAME "-orchestrator-svc" | quote }}
         port:
           number: 80
     corsPolicy:          

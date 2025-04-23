@@ -28,6 +28,11 @@ output "OPENAI_ENDPOINT" {
     sensitive = false
 }
 
+output "OPENAI_PRIMARY_KEY" {
+    value = module.openai.OPENAI_PRIMARY_KEY
+    sensitive = true
+}
+
 output "WORKLOAD_ID_NAME" {
     value = azurerm_user_assigned_identity.app_identity.name
     sensitive = false
@@ -80,6 +85,11 @@ output "ISTIO_TENANT_ID" {
 
 output "KEYVAULT_NAME" {
     value = module.cluster.KEYVAULT_NAME
+    sensitive = false
+}
+
+output "APP_KEYVAULT_NAME" {
+    value = azurerm_key_vault.this.name
     sensitive = false
 }
 

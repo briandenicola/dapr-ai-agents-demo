@@ -15,7 +15,6 @@ OPENAI:
   DEPLOYMENT_NAME                       : "gpt-4.1"
   API_VERSION                           : "2024-12-01-preview"
   
- 
 ACR:
   NAME                                  : ""
 
