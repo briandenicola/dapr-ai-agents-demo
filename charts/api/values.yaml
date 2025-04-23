@@ -24,6 +24,7 @@ KEYVAULT:
     SERVICE_BUS                         : "sbconnection"
     SQL_WORKFLOW                        : "workflowsqlconnection"
     SQL_AGENTS                          : "agentsqlconnection"
+    AOAI                                : "openaiapikey"
 
 WORKLOAD_ID:
   NAME                                  : ""

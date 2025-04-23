@@ -95,7 +95,6 @@ tasks:
         --set WORKLOAD_ID.TENANT_ID={{.WORKLOAD_TENANT_ID}}        
         --set OPENAI.API_VERSION={{.OPENAI_API_VERSION}}
         --set OPENAI.DEPLOYMENT_NAME={{.OPENAI_DEPLOYMENT_NAME}}
-        --set OPENAI.KEY={{.OPENAI_KEY}}
         --set OPENAI.ENDPOINT={{.OPENAI_ENDPOINT}} ./charts/api > 
         ./cluster-config/api/components.yaml
       - git add ./cluster-config/api/components.yaml || true
@@ -115,8 +114,6 @@ tasks:
         sh: terraform -chdir=./infrastructure/azure output -raw ACR_NAME
       OPENAI_ENDPOINT:
         sh: terraform -chdir=./infrastructure/azure output -raw OPENAI_ENDPOINT  
-      OPENAI_KEY:
-        sh: terraform -chdir=./infrastructure/azure output -raw OPENAI_PRIMARY_KEY
       APP_KEYVAULT_NAME:
         sh: terraform -chdir=./infrastructure/azure output -raw APP_KEYVAULT_NAME        
       COMMIT_VERSION:

@@ -34,6 +34,7 @@ locals {
   postgresql_workflow_state_database_name = "workflowstatedb"
   postgresql_agent_state_database_name    = "agentstatedb"
   service_bus_secret_name                 = "sbconnection"
+  azure_openai_secret_name                = "openaiapikey"   
   workflow_postgresql_secret_name         = "workflowsqlconnection"
   agent_postgresql_secret_name            = "agentsqlconnection"
 }
