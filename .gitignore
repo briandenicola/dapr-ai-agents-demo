@@ -19,13 +19,13 @@ infrastructure/local/terraform.tfstate.backup
 infrastructure/local/variables.tfvars
 infrastructure/local/terraform.tfstate.d/
 
-infrastructure/kubernetes/.terraform/
-infrastructure/kubernetes/.terraform.tfstate.lock.info
-infrastructure/kubernetes/.terraform.lock.hcl
-infrastructure/kubernetes/terraform.tfstate
-infrastructure/kubernetes/terraform.tfstate.backup
-infrastructure/kubernetes/variables.tfvars
-infrastructure/kubernetes/terraform.tfstate.d/
+infrastructure/azure/.terraform/
+infrastructure/azure/.terraform.tfstate.lock.info
+infrastructure/azure/.terraform.lock.hcl
+infrastructure/azure/terraform.tfstate
+infrastructure/azure/terraform.tfstate.backup
+infrastructure/azure/variables.tfvars
+infrastructure/azure/terraform.tfstate.d/
 
 # User-specific files
 *.rsuser

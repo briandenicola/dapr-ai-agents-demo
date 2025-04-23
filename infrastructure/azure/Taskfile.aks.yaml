@@ -75,9 +75,9 @@ tasks:
       - git checkout main 
     vars:
       APP_NAME:
-        sh: terraform -chdir=./infrastructure/kubernetes output -raw APP_NAME    
+        sh: terraform -chdir=../../infrastructure/azure output -raw APP_NAME    
       ACR_NAME:
-        sh: terraform -chdir=../../infrastructure output -raw ACR_NAME
+        sh: terraform -chdir=../../infrastructure/azure output -raw ACR_NAME
       COMMIT_VERSION:
         sh: git rev-parse HEAD | cut -c 1-8
 
@@ -163,25 +163,25 @@ tasks:
       DATE_TIME:
         sh: date     
       TAG_NAME:
-        sh: terraform -chdir=./infrastructure/kubernetes output -raw APP_NAME
+        sh: terraform -chdir=./infrastructure/azure output -raw APP_NAME
       APP_INSIGHTS_CONNECTION_STRING:
-        sh: terraform -chdir=./infrastructure/kubernetes output -raw APP_INSIGHTS_CONNECTION_STRING
+        sh: terraform -chdir=./infrastructure/azure output -raw APP_INSIGHTS_CONNECTION_STRING
       APP_INSIGHTS_INSTRUMENTATION_KEY:
-        sh: terraform -chdir=./infrastructure/kubernetes output -raw APP_INSIGHTS_INSTRUMENTATION_KEY
+        sh: terraform -chdir=./infrastructure/azure output -raw APP_INSIGHTS_INSTRUMENTATION_KEY
       ISTIO_CLIENT_ID:
-        sh: terraform -chdir=./infrastructure/kubernetes output -raw ISTIO_CLIENT_ID
+        sh: terraform -chdir=./infrastructure/azure output -raw ISTIO_CLIENT_ID
       ISTIO_TENANT_ID:
-        sh: terraform -chdir=./infrastructure/kubernetes output -raw ISTIO_TENANT_ID 
+        sh: terraform -chdir=./infrastructure/azure output -raw ISTIO_TENANT_ID 
       OTEL_WORKLOAD_ID_NAME:
-        sh: terraform -chdir=./infrastructure/kubernetes output -raw OTEL_WORKLOAD_ID_NAME
+        sh: terraform -chdir=./infrastructure/azure output -raw OTEL_WORKLOAD_ID_NAME
       OTEL_CLIENT_ID:
-        sh: terraform -chdir=./infrastructure/kubernetes output -raw OTEL_CLIENT_ID
+        sh: terraform -chdir=./infrastructure/azure output -raw OTEL_CLIENT_ID
       OTEL_TENANT_ID:
-        sh: terraform -chdir=./infrastructure/kubernetes output -raw ISTIO_TENANT_ID
+        sh: terraform -chdir=./infrastructure/azure output -raw ISTIO_TENANT_ID
       KEYVAULT_NAME:
-        sh: terraform -chdir=./infrastructure/kubernetes output -raw KEYVAULT_NAME
+        sh: terraform -chdir=./infrastructure/azure output -raw KEYVAULT_NAME
       INGESTION_ENDPOINT:
-        sh: terraform -chdir=./infrastructure/kubernetes output -raw APP_INSIGHTS_CONNECTION_STRING | grep -oP 'IngestionEndpoint=\K[^;]+' | sed 's:/$::'
+        sh: terraform -chdir=./infrastructure/azure output -raw APP_INSIGHTS_CONNECTION_STRING | grep -oP 'IngestionEndpoint=\K[^;]+' | sed 's:/$::'
 
   dns:
     desc: Gets the IP Address of the Istio Gateway
