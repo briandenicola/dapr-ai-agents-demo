@@ -193,7 +193,6 @@ tasks:
 
   dns:
     desc: Gets the IP Address of the Istio Gateway
-    dir: ./scripts
     cmds:
     - cmd: echo -e '➡️\033[1m\e[38;5;45mThe Azure APIM Backend locator.{{.DEFAULT_DOMAIN}} should resolve to {{.IP}}'
       silent: true
