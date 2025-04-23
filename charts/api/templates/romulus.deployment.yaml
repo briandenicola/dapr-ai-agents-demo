@@ -44,7 +44,10 @@ spec:
         - name: OPENAI_API_ENDPOINT
           value: {{ print .Values.OPENAI.ENDPOINT }}
         - name: OPENAI_API_KEY
-          value:  {{ print .Values.OPENAI.KEY }}  
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key:  {{ .Values.KEYVAULT.SECRETS.AOAI }}
         - name: OPENAI_API_VERSION
           value: {{ .Values.OPENAI.API_VERSION }}  
         - name: OPENAI_DEPLOYMENT_NAME
@@ -59,6 +62,17 @@ spec:
           requests:
             memory: "128Mi"
             cpu: "0.5"
+        volumeMounts:
+          - name: secrets-store-inline
+            mountPath: "/mnt/secrets-store"                       
+            readOnly: true  
+      volumes:
+      - name: secrets-store-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: {{ .Values.KEYVAULT.SECRETS.AOAI }}             
 ---
 apiVersion: v1
 kind: Service

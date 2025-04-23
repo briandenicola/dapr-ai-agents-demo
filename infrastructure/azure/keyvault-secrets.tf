@@ -30,6 +30,6 @@ resource "azurerm_key_vault_secret" "azure_open_key" {
     azurerm_role_assignment.admin
   ]
   name         = local.azure_openai_secret_name
-  value        = module.openai.OPENAI_API_KEY
+  value        = module.openai.OPENAI_PRIMARY_KEY
   key_vault_id = azurerm_key_vault.this.id
 }
