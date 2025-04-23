@@ -66,18 +66,17 @@ tasks:
 
   build:
     desc: Builds application via ACR tasks
-    dir: ./src/api
     cmds:
       - task: branch
-      - az acr build -t {{.NAMESPACE}}/{{.APP_NAME}}-orchestrator:{{.COMMIT_VERSION}} -r {{.ACR_NAME}} ./services/orchestrator/.
-      - az acr build -t {{.NAMESPACE}}/{{.APP_NAME}}-remus:{{.COMMIT_VERSION}} -r {{.ACR_NAME}} ./services/remus/
-      - az acr build -t {{.NAMESPACE}}/{{.APP_NAME}}-romulus:{{.COMMIT_VERSION}} -r {{.ACR_NAME}} ./services/romulus/
+      - az acr build -t {{.NAMESPACE}}/{{.APP_NAME}}-orchestrator:{{.COMMIT_VERSION}} -r {{.ACR_NAME}} ../../src/api/services/orchestrator/.
+      - az acr build -t {{.NAMESPACE}}/{{.APP_NAME}}-remus:{{.COMMIT_VERSION}} -r {{.ACR_NAME}} ../../src/api/services/remus/.
+      - az acr build -t {{.NAMESPACE}}/{{.APP_NAME}}-romulus:{{.COMMIT_VERSION}} -r {{.ACR_NAME}} ../../src/api/services/romulus/.
       - git checkout main 
     vars:
       APP_NAME:
-        sh: terraform -chdir=../../infrastructure/azure output -raw APP_NAME    
+        sh: terraform output -raw APP_NAME    
       ACR_NAME:
-        sh: terraform -chdir=../../infrastructure/azure output -raw ACR_NAME
+        sh: terraform output -raw ACR_NAME
       COMMIT_VERSION:
         sh: git rev-parse HEAD | cut -c 1-8
 
