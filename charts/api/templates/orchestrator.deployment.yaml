@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.APP.NAME }}
+  name: {{ print .Values.APP_NAME "-orchestrator" | quote }}
   namespace: {{ .Values.APP.NAMESPACE }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Values.APP.NAME }}
+      app: {{ print .Values.APP_NAME "-orchestrator" | quote }}
       name: {{ .Values.APP.TAG_NAME }}
   strategy:
     type: RollingUpdate
@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ .Values.APP.NAME }}
+        app: {{ print .Values.APP_NAME "-orchestrator" | quote }}
         name: {{ .Values.APP.TAG_NAME }}
         azure.workload.identity/use: "true"
       annotations:
@@ -27,28 +27,30 @@ spec:
         prometheus.io/path: "/metrics"
         dapr.io/enabled: "true"
         dapr.io/config: {{ print .Values.APP_NAME "-config" | quote }}
-        dapr.io/app-id: {{ print .Values.APP_NAME "-api" | quote }}
-        dapr.io/app-port: "8080"
+        dapr.io/app-id: {{ print .Values.APP_NAME "-orchestrator" | quote }}
+        dapr.io/app-port: "8004"
         dapr.io/log-level: "info"
         dapr.io/http-max-request-size: "512"                
     spec:
       serviceAccountName: {{ .Values.WORKLOAD_ID.NAME }}
       containers:
       - name: {{ .Values.APP.NAME }}
-        image:  {{ print .Values.ACR.NAME "/" .Values.APP.NAMESPACE "/" .Values.APP.NAME ":" .Values.APP.VERSION }} 
+        image:  {{ print .Values.ACR.NAME "/" .Values.APP.NAMESPACE "/" .Values.APP.NAME "-orchestrator:" .Values.APP.VERSION }} 
         imagePullPolicy: Always
         securityContext:
           runAsNonRoot: true
           allowPrivilegeEscalation: false 
         env:
-        - name: RIC_OTEL_ENDPOINT
-          value: {{ print .Values.OTEL.ENDPOINT }}
-        - name: RIC_AOI_ENDPOINT
-          value:  {{ print .Values.OPENAI.ENDPOINT }}  
-        - name: AOI_MODEL_NAME
-          value: {{ .Values.OPENAI.MODEL_NAME }}       
+        - name: OPENAI_API_ENDPOINT
+          value: {{ print .Values.OPENAI.ENDPOINT }}
+        - name: OPENAI_API_KEY
+          value:  {{ print .Values.OPENAI.KEY }}  
+        - name: OPENAI_API_VERSION
+          value: {{ .Values.OPENAI.API_VERSION }}  
+        - name: OPENAI_DEPLOYMENT_NAME
+          value: {{ .Values.OPENAI.DEPLOYMENT_NAME }}                 
         ports:
-        - containerPort: {{ .Values.APP.PORT }}
+        - containerPort: 8004
         - containerPort: 9090
         resources:
           limits:
@@ -61,15 +63,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ print .Values.APP.NAME "-svc" }}
+  name: {{ print .Values.APP_NAME "-orchestrator-svc" | quote }}
   namespace: {{ .Values.APP.NAMESPACE }}
 spec:
   selector:
-    app: {{ .Values.APP.NAME }}
+    app: {{ print .Values.APP_NAME "-orchestrator" | quote }}
     name: {{ .Values.APP.TAG_NAME }}
   ports:
   - port: 80
-    targetPort: {{ .Values.APP.PORT }}
+    targetPort: 8004
     name: web
   - port: 9090
     targetPort: 9090
@@ -79,7 +81,7 @@ spec:
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name:  {{ print .Values.APP.NAME "-vs" }}
+  name:  {{ print .Values.APP.NAME "-orchestrator-vs" }}
   namespace: {{ .Values.APP.NAMESPACE }}
 spec:
   hosts:
@@ -89,7 +91,7 @@ spec:
   http:
   - route:
     - destination:
-        host: {{ print .Values.APP.NAME "-svc" }}
+        host: {{ print .Values.APP_NAME "-orchestrator-svc" | quote }}
         port:
           number: 80
     corsPolicy:          

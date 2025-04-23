@@ -11,4 +11,54 @@ spec:
     value: {{ .Values.KEYVAULT.NAME }} 
   - name: spnClientId
     value: {{ .Values.WORKLOAD_ID.CLIENT_ID }} 
-
+---
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: agentstatestore
+  namespace: {{ .Values.NAMESPACE }}
+spec:
+  type: state.postgresql
+  version: v1
+  metadata:
+  - name: connectionString
+    secretKeyRef:
+      name: {{ .Values.KEYVAULT.SECRETS.SQL_AGENTS }}
+      key: {{ .Values.KEYVAULT.SECRETS.SQL_AGENTS }}
+  - name: actorStateStore
+    value: "true"
+  - name: keyPrefix
+    value: none
+auth:
+  secretStore: keyvault  
+---
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: pubsub
+  namespace: {{ .Values.NAMESPACE }}
+spec:
+  type: pubsub.azure.servicebus
+  version: v1
+  metadata:
+  - name: connectionString
+    secretKeyRef:
+      name: {{ .Values.KEYVAULT.SECRETS.SERVICE_BUS }}
+      key: {{ .Values.KEYVAULT.SECRETS.SERVICE_BUS }}
+auth:
+  secretStore: keyvault
+---
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: workflowstatestore
+spec:
+  type: state.postgresql
+  version: v1
+  metadata:
+  - name: connectionString
+    secretKeyRef:
+      name: {{ .Values.KEYVAULT.SECRETS.SQL_WORKFLOW }}
+      key: {{ .Values.KEYVAULT.SECRETS.SQL_WORKFLOW }}
+auth:
+  secretStore: keyvault 

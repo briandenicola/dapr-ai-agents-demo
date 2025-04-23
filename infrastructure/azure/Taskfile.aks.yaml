@@ -64,18 +64,22 @@ tasks:
       AKS:
         sh: terraform output -raw AKS_CLUSTER_NAME
 
-  # build:
-  #   desc: Builds application via ACR tasks
-  #   dir: ./src/api
-  #   cmds:
-  #     - task: branch
-  #     - az acr build -t rome/locator-api:{{.COMMIT_VERSION}} -r {{.ACR_NAME}} .
-  #     - git checkout main 
-  #   vars:
-  #     ACR_NAME:
-  #       sh: terraform -chdir=../../infrastructure output -raw ACR_NAME
-  #     COMMIT_VERSION:
-  #       sh: git rev-parse HEAD | cut -c 1-8
+  build:
+    desc: Builds application via ACR tasks
+    dir: ./src/api
+    cmds:
+      - task: branch
+      - az acr build -t {{.NAMESPACE}}/{{.APP_NAME}}-orchestrator:{{.COMMIT_VERSION}} -r {{.ACR_NAME}} ./services/orchestrator/.
+      - az acr build -t {{.NAMESPACE}}/{{.APP_NAME}}-remus:{{.COMMIT_VERSION}} -r {{.ACR_NAME}} ./services/remus/
+      - az acr build -t {{.NAMESPACE}}/{{.APP_NAME}}-romulus:{{.COMMIT_VERSION}} -r {{.ACR_NAME}} ./services/romulus/
+      - git checkout main 
+    vars:
+      APP_NAME:
+        sh: terraform -chdir=./infrastructure/kubernetes output -raw APP_NAME    
+      ACR_NAME:
+        sh: terraform -chdir=../../infrastructure output -raw ACR_NAME
+      COMMIT_VERSION:
+        sh: git rev-parse HEAD | cut -c 1-8
 
   # ui:
   #   desc: Builds and Deploys the UI code to Azure Static Web Apps

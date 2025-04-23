@@ -1,8 +1,3 @@
-resource "random_password" "postgresql_user_password" {
-  length  = 25
-  special = false
-}
-
 resource "azurerm_postgresql_flexible_server" "this" {
   depends_on = [
     azurerm_private_dns_zone_virtual_network_link.privatelink_postgres_database_azure_com
@@ -21,8 +16,15 @@ resource "azurerm_postgresql_flexible_server" "this" {
   zone                          = "2"
 }
 
-resource "azurerm_postgresql_flexible_server_database" "state" {
-  name      = local.postgresql_database_name
+resource "azurerm_postgresql_flexible_server_database" "agent_state" {
+  name      = local.postgresql_agent_state_database_name
+  server_id = azurerm_postgresql_flexible_server.this.id
+  collation = "en_US.utf8"
+  charset   = "utf8"
+}
+
+resource "azurerm_postgresql_flexible_server_database" "workflow_state" {
+  name      = local.postgresql_workflow_state_database_name
   server_id = azurerm_postgresql_flexible_server.this.id
   collation = "en_US.utf8"
   charset   = "utf8"

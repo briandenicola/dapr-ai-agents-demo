@@ -7,9 +7,9 @@ resource "random_pet" "this" {
   separator = ""
 }
 
-resource "random_password" "password" {
+resource "random_password" "postgresql_user_password" {
   length  = 25
-  special = true
+  special = false
 }
 
 resource "random_integer" "vnet_cidr" {

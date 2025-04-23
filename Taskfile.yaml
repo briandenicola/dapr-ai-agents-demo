@@ -22,9 +22,9 @@ includes:
     dir: ./infrastructure/local/
 
   azure:
-    taskfile: ./infrastructure/kubernetes/Taskfile.aks.yaml
+    taskfile: ./infrastructure/azure/Taskfile.aks.yaml
     internal: false
-    dir: ./infrastructure/kubernetes/
+    dir: ./infrastructure/azure/
 
 tasks:  
   default:
