@@ -8,8 +8,7 @@ vars:
   HELM_CHART: locator-api
   SKU: Standard_D4ads_v5
   DEFAULT_REGION: canadacentral
-  DEFAULT_DOMAIN: bjdazure.tech
-  APP_URL: https://locator-api.{{.DEFAULT_DOMAIN}}
+  APP_URL: https://locator-api.{{.DEFAULT_DOMAIN}} #DEFAULT_DOMAIN is defined in the .env file
   COUNT: 3
   NAMESPACE: rome 
   OPENAI_DEPLOYMENT_NAME: gpt-4.1

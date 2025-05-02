@@ -12,6 +12,24 @@ module "openai" {
     deploy       = true
     workspace_id =  module.azure_monitor.LOG_ANALYTICS_RESOURCE_ID
   }
+  llm_model = [{
+    name            = "gpt-4o"
+    deployment_name = "gpt-4o"
+    version         = "2024-08-06"
+    sku_type        = "Standard"
+  },
+  {
+    name            = "o1"
+    deployment_name = "o1"
+    version         = "2024-12-17"
+    sku_type        = "GlobalStandard"
+  },
+  {
+    name            = "gpt-4.1"
+    deployment_name = "gpt-4.1"
+    version         = "2024-12-01-preview"
+    sku_type        = "GlobalStandard"
+  }]  
 }
 
 resource "azurerm_private_endpoint" "azure_pop" {

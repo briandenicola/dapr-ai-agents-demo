@@ -40,7 +40,7 @@ tasks:
   apply:
     desc: Applies Terraform configuration for {{.LOCAL_TITLE}}
     cmds:
-      - terraform apply -auto-approve  -compact-warnings
+      - terraform apply -auto-approve -compact-warnings
         -var "region={{.REGION}}"
         -var "tags={{.LOCAL_TITLE}}"
     vars:
