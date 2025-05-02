@@ -43,8 +43,9 @@ The local environment creates the following resources:
     task local:run
     ```
 ## Validate 
-
-__TBD__
+* There is currently no UI for this application.  
+* The local deployment environment will create a client application that makes a call to the Orchestrator API
+* Watch the logs for the Orchestrator API, the Remus Agent, and the Romulus Agent to see the conversation flow.
 
 ## Clean up
 ```bash
@@ -83,8 +84,16 @@ The Azure environment creates the following resources:
         task azure:deploy
 
 ## Validate 
-
-__TBD__
+* There is currently no UI for this application.  
+* The Azure deployment environment does not create a client application.  
+* To validate (for now), do the following:
+    ```bash 
+    kubectl run --restart=Never --image=bjd145/utils:3.20 utils
+    kubectl exec -it utils -- bash
+    curl -vv "http://{$APP_NAME}-orchestrator-svc.rome.svc/start-workflow" -d '{"task": "Which of seven hills should we build our new city upon?!"}' -H "Content-Type: application/json"
+    ```
+* Watch the logs for the Orchestrator API, the Remus Agent, and the Romulus Agent to see the conversation flow.
+* A UI is in the works for this application. The UI will be a web application that will allow users to interact with the agents and see the conversation flow.
 
 ## Clean up
 ```bash
