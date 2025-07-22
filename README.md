@@ -49,7 +49,7 @@ The local environment creates the following resources:
 
 ## Clean up
 ```bash
-    task task:down
+    task local:down
 ```
 
 # Azure Environment Setup
