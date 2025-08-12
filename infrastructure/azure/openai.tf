@@ -15,8 +15,8 @@ module "openai" {
   llm_model = [{
     name            = "gpt-4o"
     deployment_name = "gpt-4o"
-    version         = "2024-08-06"
-    sku_type        = "Standard"
+    version         = "2024-11-20"
+    sku_type        = "GlobalStandard"
   },
   {
     name            = "o1"
