@@ -27,7 +27,7 @@ module "openai" {
   {
     name            = "gpt-4.1"
     deployment_name = "gpt-4.1"
-    version         = "2024-12-01-preview"
+    version         = "2025-04-14"
     sku_type        = "GlobalStandard"
   }] 
 }
