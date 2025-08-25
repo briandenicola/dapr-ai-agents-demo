@@ -1,4 +1,4 @@
-from dapr_agents import Agent, AgentActor, OpenAIChatClient
+from dapr_agents import DurableAgent #Agent, AgentActor, OpenAIChatClient
 from dotenv import load_dotenv
 import asyncio
 import logging
@@ -7,16 +7,16 @@ import os
 async def main():
     try:
         
-        llm = OpenAIChatClient(
-            api_key=os.getenv("OPENAI_API_KEY"),
-            azure_endpoint=os.getenv("OPENAI_API_ENDPOINT"),
-            azure_deployment=os.getenv("OPENAI_DEPLOYMENT_NAME"), 
-            api_version=os.getenv("OPENAI_API_VERSION"),
-        )
+        # llm = OpenAIChatClient(
+        #     api_key=os.getenv("OPENAI_API_KEY"),
+        #     azure_endpoint=os.getenv("OPENAI_API_ENDPOINT"),
+        #     azure_deployment=os.getenv("OPENAI_DEPLOYMENT_NAME"), 
+        #     api_version=os.getenv("OPENAI_API_VERSION"),
+        # )
         
-        remus_agent = Agent(
+        remus_agent = DurableAgent(
             role="Son of Mars",
-            llm=llm,
+            #llm=llm,
             name="Remus",
             goal="To found a new city on one of the seven hills of Rome, using augury to determine the best location.",
             instructions=[
@@ -27,18 +27,26 @@ async def main():
                 "You speak with certain Shakespearean Latin."
                 "You are arguing over which of the seven hills your new city will be founded on and have agreed to use augury to settle the dispute.",
             ],
-        )
-
-        # Expose Agent as an Actor over a Service
-        human_actor = AgentActor(
-            agent=remus_agent,
             message_bus_name="messagepubsub",
+            state_store_name="workflowstatestore",
+            state_key="workflow_state",
             agents_registry_store_name="agentstatestore",
             agents_registry_key="agents_registry",
-            service_port=8002,
+            broadcast_topic_name="beacon_channel",
         )
+        await remus_agent.start()
+        
+        # Expose Agent as an Actor over a Service
+        # human_actor = AgentActor(
+        #     agent=remus_agent,
+        #     message_bus_name="messagepubsub",
+        #     agents_registry_store_name="agentstatestore",
+        #     agents_registry_key="agents_registry",
+        #     service_port=8002,
+        # )
 
-        await human_actor.start()
+        # await human_actor.start()
+
     except Exception as e:
         print(f"Error starting actor: {e}")
 
