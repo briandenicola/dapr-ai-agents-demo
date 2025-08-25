@@ -5,14 +5,13 @@ import logging
 import os
 
 async def main():
-    try:
-        
-        # llm = OpenAIChatClient(
-        #     api_key=os.getenv("OPENAI_API_KEY"),
-        #     azure_endpoint=os.getenv("OPENAI_API_ENDPOINT"),
-        #     azure_deployment=os.getenv("OPENAI_DEPLOYMENT_NAME"), 
-        #     api_version=os.getenv("OPENAI_API_VERSION"),
-        # )
+    try:        
+        llm = OpenAIChatClient(
+            api_key=os.getenv("OPENAI_API_KEY"),
+            azure_endpoint=os.getenv("OPENAI_API_ENDPOINT"),
+            azure_deployment=os.getenv("OPENAI_DEPLOYMENT_NAME"), 
+            api_version=os.getenv("OPENAI_API_VERSION"),
+        )
         
         romulus_agent = DurableAgent(
             role="Son of Mars",
@@ -33,6 +32,7 @@ async def main():
             agents_registry_key="agents_registry",
             broadcast_topic_name="beacon_channel",         
         )
+        await romulus_agent.start()
 
         # Expose Agent as an Actor over a Service
         # human_actor = AgentActor(

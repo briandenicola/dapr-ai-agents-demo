@@ -7,16 +7,16 @@ import os
 async def main():
     try:
         
-        # llm = OpenAIChatClient(
-        #     api_key=os.getenv("OPENAI_API_KEY"),
-        #     azure_endpoint=os.getenv("OPENAI_API_ENDPOINT"),
-        #     azure_deployment=os.getenv("OPENAI_DEPLOYMENT_NAME"), 
-        #     api_version=os.getenv("OPENAI_API_VERSION"),
-        # )
+        llm = OpenAIChatClient(
+            api_key=os.getenv("OPENAI_API_KEY"),
+            azure_endpoint=os.getenv("OPENAI_API_ENDPOINT"),
+            azure_deployment=os.getenv("OPENAI_DEPLOYMENT_NAME"), 
+            api_version=os.getenv("OPENAI_API_VERSION"),
+        )
         
         remus_agent = DurableAgent(
             role="Son of Mars",
-            #llm=llm,
+            llm=llm,
             name="Remus",
             goal="To found a new city on one of the seven hills of Rome, using augury to determine the best location.",
             instructions=[
