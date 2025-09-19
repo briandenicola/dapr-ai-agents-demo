@@ -1,39 +1,40 @@
 module "openai" {
-  depends_on = [ 
+  depends_on = [
     azurerm_resource_group.app,
   ]
-  source               = "../.modules/openai"
-  resource_name        = local.resource_name
+  source        = "../.modules/openai"
+  resource_name = local.resource_name
   resource_group = {
     location = local.openai_location
     name     = azurerm_resource_group.app.name
+    id       = azurerm_resource_group.app.id
   }
-  log_analytics ={ 
+  log_analytics = {
     deploy       = true
-    workspace_id =  module.azure_monitor.LOG_ANALYTICS_RESOURCE_ID
+    workspace_id = module.azure_monitor.LOG_ANALYTICS_RESOURCE_ID
   }
   llm_model = [{
     name            = "gpt-4o"
     deployment_name = "gpt-4o"
     version         = "2024-11-20"
     sku_type        = "GlobalStandard"
-  },
-  {
-    name            = "o1"
-    deployment_name = "o1"
-    version         = "2024-12-17"
-    sku_type        = "GlobalStandard"
-  },
-  {
-    name            = "gpt-4.1"
-    deployment_name = "gpt-4.1"
-    version         = "2025-04-14"
-    sku_type        = "GlobalStandard"
-  }]  
+    },
+    {
+      name            = "o1"
+      deployment_name = "o1"
+      version         = "2024-12-17"
+      sku_type        = "GlobalStandard"
+    },
+    {
+      name            = "gpt-4.1"
+      deployment_name = "gpt-4.1"
+      version         = "2025-04-14"
+      sku_type        = "GlobalStandard"
+  }]
 }
 
 resource "azurerm_private_endpoint" "azure_pop" {
-  depends_on = [ 
+  depends_on = [
     module.openai,
   ]
   name                = "${module.openai.OPENAI_RESOURCE_NAME}-endpoint"
@@ -49,7 +50,7 @@ resource "azurerm_private_endpoint" "azure_pop" {
   }
 
   private_dns_zone_group {
-    name                          = azurerm_private_dns_zone.privatelink_openai_azure_com.name
-    private_dns_zone_ids          = [ azurerm_private_dns_zone.privatelink_openai_azure_com.id ]
+    name                 = azurerm_private_dns_zone.privatelink_openai_azure_com.name
+    private_dns_zone_ids = [azurerm_private_dns_zone.privatelink_openai_azure_com.id]
   }
 }
