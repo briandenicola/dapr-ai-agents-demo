@@ -27,8 +27,8 @@ spec:
         prometheus.io/path: "/metrics"
         dapr.io/enabled: "true"
         dapr.io/config: {{ print .Values.APP.NAME "-config" | quote }}
-        dapr.io/app-id: {{ print .Values.APP.NAME "-romulus" | quote }}
-        dapr.io/app-port: "8001"
+        dapr.io/app-id: "Romulus"
+        dapr.io/app-port: "8002"
         dapr.io/log-level: "info"
         dapr.io/http-max-request-size: "512"                
     spec:
@@ -38,19 +38,19 @@ spec:
         image:  {{ print .Values.ACR.NAME "/" .Values.APP.NAMESPACE "/" .Values.APP.NAME "-romulus:" .Values.APP.VERSION }} 
         imagePullPolicy: Always
         env:
-        - name: OPENAI_API_ENDPOINT
+        - name: AZURE_OPENAI_ENDPOINT
           value: {{ print .Values.OPENAI.ENDPOINT }}
-        - name: OPENAI_API_KEY
+        - name: AZURE_OPENAI_API_KEY
           valueFrom:
             secretKeyRef:
               name: app-secrets
               key:  {{ .Values.KEYVAULT.SECRETS.AOAI }}
-        - name: OPENAI_API_VERSION
+        - name: AZURE_OPENAI_API_VERSION
           value: {{ .Values.OPENAI.API_VERSION }}  
-        - name: OPENAI_DEPLOYMENT_NAME
+        - name: AZURE_OPENAI_DEPLOYMENT
           value: {{ .Values.OPENAI.DEPLOYMENT_NAME }}        
         ports:
-        - containerPort: 8001
+        - containerPort: 8002
         - containerPort: 9090
         resources:
           limits:
@@ -82,7 +82,7 @@ spec:
     name: romulus
   ports:
   - port: 80
-    targetPort: 8001
+    targetPort: 8002
     name: web
   - port: 9090
     targetPort: 9090

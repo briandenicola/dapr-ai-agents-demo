@@ -13,7 +13,7 @@ OPENAI:
   ENDPOINT                              : ""
   KEY                                   : ""
   DEPLOYMENT_NAME                       : "gpt-4.1"
-  API_VERSION                           : "2024-12-01-preview"
+  API_VERSION                           : "2025-01-01-preview"
   
 ACR:
   NAME                                  : ""
