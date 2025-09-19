@@ -1,5 +1,5 @@
 data "azurerm_monitor_diagnostic_categories" "this" {
-  resource_id = azurerm_cognitive_account.this.id
+  resource_id = data.azurerm_cognitive_account.this.id
 }
 
 # resource "azurerm_cognitive_account" "this" {
@@ -11,8 +11,8 @@ data "azurerm_monitor_diagnostic_categories" "this" {
 #   sku_name              = "S0"
 # }
 
-resource "azapi_resource" "global" {
-  type      = "Microsoft.CognitiveServices/account@2025-06-01"
+resource "azapi_resource" "ai_foundry" {
+  type      = "Microsoft.CognitiveServices/accounts@2025-06-01"
   name      = "${local.openai_name}-global"
   location  = var.resource_group.location
   parent_id = var.resource_group.id
@@ -30,9 +30,9 @@ resource "azapi_resource" "global" {
   }
 }
 
-data "azurerm_cognitive_account" "global" {
-  depends_on          = [azapi_resource.global]
-  name                = "${local.openai_name}-global"
+data "azurerm_cognitive_account" "this" {
+  depends_on          = [azapi_resource.ai_foundry]
+  name                = local.openai_name
   resource_group_name = var.resource_group.name
 }
 
