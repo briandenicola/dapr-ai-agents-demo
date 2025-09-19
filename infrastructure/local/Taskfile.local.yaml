@@ -13,6 +13,7 @@ tasks:
     internal: true
     run: once
     cmds: 
+    - sudo /etc/init.d/docker start || true
     - dapr uninstall
     - dapr init
     - terraform workspace new {{.REGION}} || true

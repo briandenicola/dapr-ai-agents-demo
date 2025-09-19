@@ -13,9 +13,16 @@ data "azurerm_monitor_diagnostic_categories" "this" {
 
 resource "azapi_resource" "ai_foundry" {
   type      = "Microsoft.CognitiveServices/accounts@2025-06-01"
-  name      = "${local.openai_name}-global"
+  name      = local.openai_name
   location  = var.resource_group.location
   parent_id = var.resource_group.id
+
+  identity {
+    type = "SystemAssigned, UserAssigned"
+    identity_ids = [
+        azurerm_user_assigned_identity.aks_identity.id
+    ]
+  }  
 
   body = {
     sku = {
