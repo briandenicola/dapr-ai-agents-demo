@@ -75,7 +75,7 @@ tasks:
     desc: Starts dapr and runs the application 
     dir: ../../scripts
     deps:
-    - task: aspire
+    - task: debug
     cmds: 
     - bash ./dapr-local.sh
 
@@ -87,6 +87,13 @@ tasks:
     - docker run --rm -p 18888:18888 -p 4317:18889 -d --name aspire-dashboard  mcr.microsoft.com/dotnet/aspire-dashboard:8.1.0 > /dev/null 2>&1 || true
     - docker run --rm -p 5540:5540  -d --name redisinsight redis/redisinsight:latest > /dev/null 2>&1 || true
 
+  stop:
+    desc: Stops Dapr instances
+    dir: ../../src/api      
+    cmds:
+    - dapr stop -f dapr.yaml
+    #- dapr list -o json | jq '.[].appId' | xargs dapr stop {};
+    
   down:
     desc: Destroys all resources and cleans up Terraform for {{.LOCAL_TITLE}}
     cmds:

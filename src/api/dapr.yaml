@@ -9,12 +9,12 @@ apps:
 - appID: RomulusAgent
   appDirPath: ./services/romulus/
   command: ["python3", "app.py"]
-  appPort: 8001
+  appPort: 8002
 
 - appID: RemusAgent
   appDirPath: ./services/remus/
   command: ["python3", "app.py"]
-  appPort: 8002
+  appPort: 8003
 
 - appID: WorkflowApp
   appDirPath: ./services/orchestrator/

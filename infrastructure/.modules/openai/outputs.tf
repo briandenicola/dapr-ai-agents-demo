@@ -4,7 +4,7 @@ output "OPENAI_RESOURCE_ID" {
 }
 
 output "OPENAI_ENDPOINT" {
-  value     = data.azurerm_cognitive_account.this.endpoint
+  value     = "https://${data.azurerm_cognitive_account.this.name}.openai.azure.com/openai/v1/" #data.azurerm_cognitive_account.this.endpoint
   sensitive = false
 }
 
