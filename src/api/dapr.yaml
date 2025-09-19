@@ -6,20 +6,20 @@ common:
   daprdLogDestination: console
 
 apps:
-- appID: RomulusAgent
+- appID: LLMOrchestrator
+  appDirPath: ./services/orchestrator/
+  command: ["python3", "app.py"]
+  appPort: 8004
+
+- appID: Romulus
   appDirPath: ./services/romulus/
   command: ["python3", "app.py"]
   appPort: 8002
 
-- appID: RemusAgent
+- appID: Remus
   appDirPath: ./services/remus/
   command: ["python3", "app.py"]
   appPort: 8003
-
-- appID: WorkflowApp
-  appDirPath: ./services/orchestrator/
-  command: ["python3", "app.py"]
-  appPort: 8004
 
 - appID: ClientApp
   appDirPath: ./services/client/

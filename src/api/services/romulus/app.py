@@ -1,4 +1,4 @@
-from dapr_agents import DurableAgent, OpenAIChatClient #Agent, AgentActor, OpenAIChatClient
+from dapr_agents import DurableAgent, OpenAIChatClient
 from dotenv import load_dotenv
 import asyncio
 import logging
@@ -33,17 +33,7 @@ async def main():
             service_port=8002,         
         )
         await romulus_agent.start()
-
-        # Expose Agent as an Actor over a Service
-        # human_actor = AgentActor(
-        #     agent=romulus_agent,
-        #     message_bus_name="messagepubsub",
-        #     agents_registry_store_name="agentstatestore",
-        #     agents_registry_key="agents_registry",
-        #     service_port=8001,
-        # )
-
-        # await human_actor.start()
+        
     except Exception as e:
         print(f"Error starting actor: {e}")
 

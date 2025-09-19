@@ -1,4 +1,4 @@
-from dapr_agents import DurableAgent, OpenAIChatClient #Agent, AgentActor, OpenAIChatClient
+from dapr_agents import DurableAgent, OpenAIChatClient
 from dotenv import load_dotenv
 import asyncio
 import logging
@@ -14,7 +14,7 @@ async def main():
         )
         
         remus_agent = DurableAgent(
-            name="Remus",role="Son of Mars",            
+            name="Remus", role="Son of Mars",            
             goal="To found a new city on one of the seven hills of Rome, using augury to determine the best location.",
             instructions=[
                 "Your name is Remus and you are a twin with your brother Romulus. "
@@ -34,17 +34,6 @@ async def main():
             service_port=8003,
         )
         await remus_agent.start()
-        
-        # Expose Agent as an Actor over a Service
-        # human_actor = AgentActor(
-        #     agent=remus_agent,
-        #     message_bus_name="messagepubsub",
-        #     agents_registry_store_name="agentstatestore",
-        #     agents_registry_key="agents_registry",
-        #     service_port=8002,
-        # )
-
-        # await human_actor.start()
 
     except Exception as e:
         print(f"Error starting actor: {e}")
