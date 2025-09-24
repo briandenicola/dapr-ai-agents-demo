@@ -1,0 +1,499 @@
+---
+# Source: roman-foundations/templates/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rome
+  labels:
+    istio.io/rev: asm-1-24
+---
+# Source: roman-foundations/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: duckling-10005-app-identity
+  namespace: rome
+  annotations:
+    azure.workload.identity/client-id: 2d0b5e55-40ef-427b-a2c5-fcb935f8e11a
+    azure.workload.identity/tenant-id: 16b3c013-d300-468d-ac64-7eda0820b6d3
+  labels:
+    azure.workload.identity/use: "true"
+---
+# Source: roman-foundations/templates/orchestrator.deployment.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: "duckling-10005-orchestrator-svc"
+  namespace: rome
+spec:
+  selector:
+    app: duckling-10005 
+    name: orchestrator
+  ports:
+  - port: 80
+    targetPort: 8004
+    name: web
+  - port: 9090
+    targetPort: 9090
+    name: metrics    
+  type: ClusterIP
+---
+# Source: roman-foundations/templates/remus.deployment.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: "duckling-10005-remus-svc"
+  namespace: rome
+spec:
+  selector:
+    app: duckling-10005 
+    name: remus
+  ports:
+  - port: 80
+    targetPort: 8003
+    name: web
+  - port: 9090
+    targetPort: 9090
+    name: metrics    
+  type: ClusterIP
+---
+# Source: roman-foundations/templates/romulus.deployment.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: "duckling-10005-romulus-svc"
+  namespace: rome
+spec:
+  selector:
+    app: duckling-10005 
+    name: romulus
+  ports:
+  - port: 80
+    targetPort: 8002
+    name: web
+  - port: 9090
+    targetPort: 9090
+    name: metrics    
+  type: ClusterIP
+---
+# Source: roman-foundations/templates/orchestrator.deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: duckling-10005-orchestrator
+  namespace: rome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: duckling-10005 
+      name: orchestrator
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: duckling-10005 
+        name: orchestrator
+        azure.workload.identity/use: "true"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+        dapr.io/enabled: "true"
+        dapr.io/config: "duckling-10005-config"
+        dapr.io/app-id: "LLMOrchestrator"
+        dapr.io/app-port: "8004"
+        dapr.io/log-level: "info"
+        dapr.io/http-max-request-size: "512"                
+    spec:
+      serviceAccountName: duckling-10005-app-identity
+      containers:
+      - name: orchestrator
+        image:  duckling10005acr.azurecr.io/rome/duckling-10005-orchestrator:fce1f9d8 
+        imagePullPolicy: Always
+        env:
+        - name: AZURE_OPENAI_ENDPOINT
+          value: https://duckling-10005-openai.openai.azure.com/openai/v1/
+        - name: AZURE_OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key:  openaiapikey
+        - name: AZURE_OPENAI_API_VERSION
+          value: 2025-04-14  
+        - name: AZURE_OPENAI_DEPLOYMENT
+          value: gpt-4.1                 
+        ports:
+        - containerPort: 8004
+        - containerPort: 9090
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "2"
+          requests:
+            memory: "128Mi"
+            cpu: "0.5"
+        volumeMounts:
+          - name: secrets-store-inline
+            mountPath: "/mnt/secrets-store"                       
+            readOnly: true  
+      volumes:
+      - name: secrets-store-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: openaiapikey
+---
+# Source: roman-foundations/templates/remus.deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: duckling-10005-remus
+  namespace: rome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: duckling-10005 
+      name: remus
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: duckling-10005 
+        name: remus
+        azure.workload.identity/use: "true"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+        dapr.io/enabled: "true"
+        dapr.io/config: "duckling-10005-config"
+        dapr.io/app-id: "Remus"
+        dapr.io/app-port: "8003"
+        dapr.io/log-level: "info"
+        dapr.io/http-max-request-size: "512"                
+    spec:
+      serviceAccountName: duckling-10005-app-identity
+      containers:
+      - name: remus
+        image:  duckling10005acr.azurecr.io/rome/duckling-10005-remus:fce1f9d8 
+        imagePullPolicy: Always
+        env:
+        - name: AZURE_OPENAI_ENDPOINT
+          value: https://duckling-10005-openai.openai.azure.com/openai/v1/
+        - name: AZURE_OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key:  openaiapikey
+        - name: AZURE_OPENAI_API_VERSION
+          value: 2025-04-14  
+        - name: AZURE_OPENAI_DEPLOYMENT
+          value: gpt-4.1        
+        ports:
+        - containerPort: 8003
+        - containerPort: 9090
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "2"
+          requests:
+            memory: "128Mi"
+            cpu: "0.5"
+        volumeMounts:
+          - name: secrets-store-inline
+            mountPath: "/mnt/secrets-store"                       
+            readOnly: true  
+      volumes:
+      - name: secrets-store-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: openaiapikey
+---
+# Source: roman-foundations/templates/romulus.deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: duckling-10005-romulus
+  namespace: rome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: duckling-10005 
+      name: romulus
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: duckling-10005 
+        name: romulus
+        azure.workload.identity/use: "true"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+        dapr.io/enabled: "true"
+        dapr.io/config: "duckling-10005-config"
+        dapr.io/app-id: "Romulus"
+        dapr.io/app-port: "8002"
+        dapr.io/log-level: "info"
+        dapr.io/http-max-request-size: "512"                
+    spec:
+      serviceAccountName: duckling-10005-app-identity
+      containers:
+      - name: romulus
+        image:  duckling10005acr.azurecr.io/rome/duckling-10005-romulus:fce1f9d8 
+        imagePullPolicy: Always
+        env:
+        - name: AZURE_OPENAI_ENDPOINT
+          value: https://duckling-10005-openai.openai.azure.com/openai/v1/
+        - name: AZURE_OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key:  openaiapikey
+        - name: AZURE_OPENAI_API_VERSION
+          value: 2025-04-14  
+        - name: AZURE_OPENAI_DEPLOYMENT
+          value: gpt-4.1        
+        ports:
+        - containerPort: 8002
+        - containerPort: 9090
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "2"
+          requests:
+            memory: "128Mi"
+            cpu: "0.5"
+        volumeMounts:
+          - name: secrets-store-inline
+            mountPath: "/mnt/secrets-store"                       
+            readOnly: true  
+      volumes:
+      - name: secrets-store-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: openaiapikey
+---
+# Source: roman-foundations/templates/dapr.components.yaml
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: keyvault
+  namespace: rome
+spec:
+  type: secretstores.azure.keyvault
+  version: v1
+  metadata:
+  - name: vaultName
+    value: duckling10005appkv 
+  - name: spnClientId
+    value: 2d0b5e55-40ef-427b-a2c5-fcb935f8e11a
+---
+# Source: roman-foundations/templates/dapr.components.yaml
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: agentstatestore
+  namespace: rome
+spec:
+  type: state.postgresql
+  version: v1
+  metadata:
+  - name: connectionString
+    secretKeyRef:
+      name: agentsqlconnection
+      key: agentsqlconnection
+  - name: actorStateStore
+    value: "true"
+  - name: keyPrefix
+    value: none
+auth:
+  secretStore: keyvault
+---
+# Source: roman-foundations/templates/dapr.components.yaml
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: messagepubsub
+  namespace: rome
+spec:
+  type: pubsub.azure.servicebus
+  version: v1
+  metadata:
+  - name: connectionString
+    secretKeyRef:
+      name: sbconnection
+      key: sbconnection
+auth:
+  secretStore: keyvault
+---
+# Source: roman-foundations/templates/dapr.components.yaml
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: workflowstatestore
+  namespace: rome
+spec:
+  type: state.postgresql
+  version: v1
+  metadata:
+  - name: connectionString
+    secretKeyRef:
+      name: workflowsqlconnection
+      key: workflowsqlconnection
+auth:
+  secretStore: keyvault
+---
+# Source: roman-foundations/templates/dapr.config.yaml
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: "duckling-10005-config"
+  namespace: rome
+spec:
+  metric:
+   enabled: true
+  tracing:
+    samplingRate: "1"
+    stdout: true
+    zipkin:
+      endpointAddress: "http://otel-collector.otel-system.svc.cluster.local:4317"
+  mtls:
+    enabled: true
+    workloadCertTTL: "24h"
+    allowedClockSkew: "15m"
+    controlPlaneTrustDomain: "cluster.local"
+    sentryAddress: "sentry.dapr-system.svc.cluster.local:80"
+---
+# Source: roman-foundations/templates/secretprovider.yaml
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: openaiapikey
+  namespace: rome
+spec:
+  provider: azure
+  secretObjects:
+  - secretName: app-secrets
+    type: Opaque                            
+    data:                 
+    - key: openaiapikey
+      objectName: openaiapikey
+  parameters:
+    usePodIdentity: "false"
+    useVMManagedIdentity: "false"
+    keyvaultName: duckling10005appkv
+    clientID: 2d0b5e55-40ef-427b-a2c5-fcb935f8e11a
+    cloudName: ""                                                  
+    objects:  |
+      array:
+        - |
+          objectName: openaiapikey
+          objectType: secret
+          objectVersion: ""                               
+    tenantId: 16b3c013-d300-468d-ac64-7eda0820b6d3
+---
+# Source: roman-foundations/templates/orchestrator.deployment.yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name:  duckling-10005-orchestrator-vs
+  namespace: rome
+spec:
+  hosts:
+  -  "*"
+  gateways:
+  -  aks-istio-ingress/default-bjdazure-tech-gw
+  http:
+  - route:
+    - destination:
+        host: "duckling-10005-orchestrator-svc"
+        port:
+          number: 80
+    corsPolicy:          
+      allowMethods:
+      - POST
+      - PUT
+      - GET
+      - OPTIONS
+      allowOrigins:
+      - regex: 'https?://(?:[\w-]+\.)*(azurestaticapps\.net|azure-api\.net)(?:/[\w\-./?%&=]*)?'
+      unmatchedPreflights: FORWARD
+---
+# Source: roman-foundations/templates/remus.deployment.yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name:  "duckling-10005-remus-vs"
+  namespace: rome
+spec:
+  hosts:
+  -  "*"
+  gateways:
+  -  aks-istio-ingress/default-bjdazure-tech-gw
+  http:
+  - route:
+    - destination:
+        host: "duckling-10005-remus-svc"
+        port:
+          number: 80
+    corsPolicy:          
+      allowMethods:
+      - POST
+      - PUT
+      - GET
+      - OPTIONS
+      allowOrigins:
+      - regex: 'https?://(?:[\w-]+\.)*(azurestaticapps\.net|azure-api\.net)(?:/[\w\-./?%&=]*)?'
+      unmatchedPreflights: FORWARD
+---
+# Source: roman-foundations/templates/romulus.deployment.yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name:  "duckling-10005-romulus-vs"
+  namespace: rome
+spec:
+  hosts:
+  -  "*"
+  gateways:
+  -  aks-istio-ingress/default-bjdazure-tech-gw
+  http:
+  - route:
+    - destination:
+        host: "duckling-10005-romulus-svc"
+        port:
+          number: 80
+    corsPolicy:          
+      allowMethods:
+      - POST
+      - PUT
+      - GET
+      - OPTIONS
+      allowOrigins:
+      - regex: 'https?://(?:[\w-]+\.)*(azurestaticapps\.net|azure-api\.net)(?:/[\w\-./?%&=]*)?'
+      unmatchedPreflights: FORWARD
