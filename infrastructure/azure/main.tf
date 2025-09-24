@@ -23,8 +23,8 @@ locals {
   nodes_subnet_cidir                      = cidrsubnet(local.vnet_cidr, 8, 3)
   compute_subnet_cidir                    = cidrsubnet(local.vnet_cidr, 8, 4)
   sql_subnet_cidir                        = cidrsubnet(local.vnet_cidr, 8, 10)
-  kubernetes_version                      = "1.32"
-  istio_version                           = "asm-1-24"
+  kubernetes_version                      = "1.33"
+  istio_version                           = "asm-1-25"
   home_ip_address                         = chomp(data.http.myip.response_body)
   apim_backend_name                       = "${local.resource_name}-backend"
   apim_api_path                           = "api"
